@@ -2,218 +2,266 @@
 
 # 🎨 BBox Studio
 ### ⚡ Lightweight, Zero-Dependency Web Image Annotation & Bounding Box Tool
-**Công cụ trực quan đóng khung hình ảnh, phân loại Tag (kèm ID & Màu), gán ngày tháng và kết xuất dữ liệu YOLO / Excel / JSON**
+**Annotate bounding boxes, manage custom Tag IDs with colors & icons, assign inspection dates, and export to YOLO / Excel / CSV / JSON.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-0%20(Pure%20JS)-orange.svg)](#)
-[![Multi-Language](https://img.shields.io/badge/Language-VI%20%7C%20EN%20%7C%20ZH-rose.svg)](#)
+[![Multi-Language](https://img.shields.io/badge/Language-EN%20%7C%20VI%20%7C%20ZH-rose.svg)](#)
 [![Theme](https://img.shields.io/badge/Theme-Light%20%7C%20Dark%20%7C%20System-purple.svg)](#)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue.svg)](https://laitran27.github.io/bbox-studio/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](#)
 
-[**🚀 Trải Nghiệm Trực Tiếp (Live Demo)**](https://laitran27.github.io/bbox-studio/) • [**📖 Hướng Dẫn Sử Dụng**](#-hướng-dẫn-sử-dụng-chi-tiết-từ-a---z) • [**📘 Hướng Dẫn Tích Hợp IFrame**](README_IFRAME.md) • [**📊 Chuẩn Xuất Excel & YOLO**](#-bảng-quy-chuẩn-23-cột-dữ-liệu-excel--database)
+[**🚀 Live Demo**](https://laitran27.github.io/bbox-studio/) • [**📖 User Guide**](#-step-by-step-user-guide) • [**📘 IFrame Integration**](README_IFRAME.md) • [**📊 Excel & YOLO Specs**](#-23-column-database--excel-schema-reference) • [**🇻🇳 Bản Tiếng Việt**](README.vi.md)
 
 </div>
 
 ---
 
-## 🌟 Giới Thiệu (Overview)
+## 🌟 Overview
 
-**BBox Studio** là công cụ đóng khung ảnh (**Bounding Box Annotation Tool**) chạy trực tiếp 100% trên trình duyệt (Client-side), thuần HTML5/Canvas/JavaScript, **không cần cài đặt thư viện nặng hay thiết lập backend phức tạp**. 
+**BBox Studio** is a client-side web application for **image bounding box annotation**, built with pure HTML5 Canvas and vanilla JavaScript. It requires **no backend server, no npm installations, and zero runtime dependencies**—open it in any modern browser and start labeling immediately.
 
-Công cụ được thiết kế tối ưu cho:
-- 🤖 **Kỹ sư AI / Computer Vision / Machine Learning**: Gán nhãn dữ liệu huấn luyện YOLO, Object Detection, trích xuất tọa độ chuẩn hóa 0–1.
-- 🏭 **Nhóm Kiểm Thử / Quản Lý Chất Lượng (QA / QC)**: Đánh dấu lỗi sản phẩm, biển số xe, barcode, đính kèm ngày kiểm tra và ghi chú.
-- 💻 **Nhà phát triển Web / Doanh nghiệp**: Nhúng nguyên khối công cụ vào các hệ thống quản trị nội bộ (ERP, CRM, DMS, Web App) qua thẻ `<iframe>` với API 2 chiều linh hoạt.
-
----
-
-## 📖 Hướng Dẫn Sử Dụng Chi Tiết (Từ A - Z)
-
-### Bước 1: Nạp hình ảnh vào ứng dụng
-Có 3 cách để mở ảnh:
-1. **Tải ảnh từ máy tính**: Bấm nút **"Tải ảnh lên"** trên thanh tiêu đề và chọn bất kỳ tệp ảnh nào (`.jpg`, `.png`, `.webp`, `.bmp`).
-2. **Kéo thả trực tiếp**: Kéo ảnh từ thư mục máy tính và thả thẳng vào khu vực Canvas.
-3. **Mở ảnh mẫu có sẵn (Demo)**: Bấm vào mũi tên cạnh nút *Tải ảnh lên* $\rightarrow$ Chọn **"Tải ảnh Demo mẫu"** để thử nghiệm ngay lập tức.
+### Ideal For:
+- 🤖 **Computer Vision & AI Engineers**: Label datasets for YOLO, object detection, and feature extraction with normalized 0.0–1.0 coordinates.
+- 🏭 **QA / QC & Defect Inspection Teams**: Tag defects, barcodes, license plates, and parts with explicit Tag IDs, colors, dates, and notes.
+- 💻 **Web Developers & SaaS Platforms**: Embed BBox Studio as a ready-to-use labeling widget into existing web apps (React, Vue, Angular, Laravel, Django, WordPress) using an `<iframe>` and a two-way `window.postMessage` API.
 
 ---
 
-### Bước 2: Thiết lập & Quản lý Danh Mục Tag (Nhãn)
-Hệ thống cho phép gán nhãn chuyên sâu với định dạng chuẩn **`ID-Tên tag`**:
-- **Chọn nhanh Tag đang dùng**: Nhấp vào các nút chip Tag trên thanh công cụ hoặc bấm phím số từ `1` đến `9`.
-- **Tạo Tag mới**:
-  1. Bấm vào nút **"⚙️ Quản lý Tag"**.
-  2. Điền: **Icon** (chọn nhanh trong bảng 35 emoji), **Mã Tag (ID)** (ví dụ: `defect_01`, `P01`, `license_plate`), **Tên Tag** và **Màu khung viền**.
-  3. Bấm **"+ Thêm vào danh sách Choice & Chọn ngay"**.
-- **Chỉnh sửa / Đổi ID của Tag có sẵn**:
-  - Trong cửa sổ Quản lý Tag, bạn có thể sửa trực tiếp Mã ID, Tên, Màu của bất kỳ nhãn nào. Toàn bộ các khung đã vẽ trên ảnh sẽ **tự động cập nhật đồng bộ**.
-- **Nạp / Xuất danh mục Tag qua file Excel (`.xlsx`)**:
-  - Bấm **"📄 Tải Template Mẫu (.xlsx)"** để tải file Excel có sẵn cấu trúc cột chuẩn.
-  - Bấm **"📊 Nhập Tag từ Excel / CSV"** để nạp hàng chục đến hàng trăm nhãn Tag vào hệ thống chỉ trong 1 giây.
-  - Bấm **"📤 Xuất Danh Sách Tag"** để lưu trữ bảng nhãn hiện tại.
+## ✨ Key Features
+
+- 🎯 **Fast & Fluid Canvas Annotation**: Click and drag to create boxes, drag to reposition, and use 4 corner handles to resize precisely to the exact pixel.
+- 🏷️ **Comprehensive Tag Management with Tag IDs**:
+  - Assign explicit **Tag ID** (`tag.id`), **Display Name** (`tag.name`), **Color** (`tag.color`), and **Emoji Icon** (`tag.icon`).
+  - Rendered across all views in the clean format: **`ID-Tag Name`** (e.g., `DEFECT_01-Solder Crack`, `person-Person`).
+  - **Bulk Tag Import/Export via Excel**: Download a structured Excel template (`.xlsx`), fill in dozens of labels, and import them with 1 click.
+  - **Category Preservation in JSON**: Exported JSON files preserve the `categories: [...]` catalog and automatically restore custom tags upon re-import.
+- 📥 **Auto-Import & Restore from JSON**: Drag and drop any previously saved JSON file to instantly redraw all bounding boxes, tags, notes, and dates on the image.
+- 📊 **Customizable Excel (`.xlsx`) & CSV Export**:
+  - Choose from **23 standardized database columns** (Identifiers, Tag metadata, Vietnamese & ISO dates, Pixel coordinates XYWH/XYXY, YOLO normalized 0–1, image dimensions).
+  - 6 instant 1-click presets: *All (23 cols), Essential (8 cols), Pixel Coordinates, YOLO AI, Database Format, and Clear All*.
+- 🖼️ **Two-Way IFrame Widget Integration**: Embed seamlessly into parent web applications with full bidirectional communication.
+- 🌐 **Internationalization (i18n)**: 1-click switching between **English 🇬🇧**, **Vietnamese 🇻🇳**, and **Chinese 🇨🇳**.
+- 🌓 **Adaptive Theming**: Fully supports **Light Mode**, **Dark Mode**, and **System Mode** (automatically respects OS `prefers-color-scheme`).
 
 ---
 
-### Bước 3: Đóng khung ảnh (Vẽ & Tinh Chỉnh)
-- **Vẽ khung mới**: Nhấn giữ chuột trái trên ảnh và kéo rê để tạo khung hình chữ nhật.
-  - Khi đang kéo, màn hình sẽ hiển thị trực tiếp kích thước thực: `${icon} ${id}-${name} | W×H px`.
-- **Đổi nhãn Tag ngay trên ảnh**:
-  - Trên mỗi khung ảnh có một thanh nổi nhỏ gọn: `#1 [🏷️ defect-Lỗi hàn ▾] [✕]`.
-  - Bạn có thể click vào dropdown để đổi Tag cho khung đó ngay lập tức mà không cần nhìn sang thanh menu bên phải.
-- **Di chuyển khung**: Bấm giữ chuột vào vùng bên trong khung và kéo đến vị trí mong muốn.
-- **Co giãn kích thước**: Rê chuột vào 4 góc tròn nhỏ của khung và kéo để phóng to/thu nhỏ chuẩn xác từng pixel.
-- **Ghi chú & Ngày tháng**:
-  - Chọn một khung $\rightarrow$ Nhìn sang danh sách thẻ bên phải (Sidebar) để điền **Ghi chú riêng** hoặc đổi **Ngày tháng**.
+## 📖 Step-by-Step User Guide
+
+### Step 1: Load an Image
+You can load images in 3 different ways:
+1. **Upload from Device**: Click the **"Upload Image"** button on the top header to select any image (`.jpg`, `.png`, `.webp`, `.bmp`).
+2. **Drag & Drop**: Drag an image file from your computer file explorer directly onto the canvas area.
+3. **1-Click Demo Sample**: Click the arrow next to the Upload button $\rightarrow$ Select **"Load Demo Sample Image"** to explore all features instantly with sample boxes.
 
 ---
 
-### Bước 4: Tự động vẽ lại khung từ file JSON (Auto Import)
-Nếu bạn đã có sẵn tọa độ (do hệ thống khác xuất ra hoặc lưu từ phiên làm việc trước):
-1. Bấm nút **"Mở tệp"** $\rightarrow$ chọn **"📥 Nhập dữ liệu JSON"** (hoặc kéo thả tệp `.json` vào trình duyệt).
-2. Hệ thống sẽ **tự động vẽ lại toàn bộ các khung hình**, tự khôi phục danh mục Tag và ngày tháng chính xác 100%.
+### Step 2: Configure & Manage Tags (Categories)
+Every box can be classified with an explicit Tag formatted as **`ID-Tag Name`**:
+- **Select Active Tag**: Click any quick-select chip on the toolbar or press keys `1` through `9`.
+- **Add a New Tag**:
+  1. Click **"⚙️ Manage Tags"**.
+  2. Enter:
+     - **Icon**: Choose an emoji or pick from the 35 basic icon palette.
+     - **Tag ID**: Enter a unique slug (e.g., `DEFECT_01`, `P01`, `license_plate`).
+     - **Tag Name**: Enter the human-readable label (e.g., `Solder Crack`, `Supervisor`).
+     - **Box Color**: Select a distinctive hex color.
+  3. Click **"+ Add to Choice list & Select now"**.
+- **Edit Existing Tags**:
+  - In the Tag Management modal, edit the ID, name, icon, or color of any existing tag. All boxes currently drawn with that tag will **automatically update in real-time**.
+- **Bulk Excel Import/Export**:
+  - Click **"📄 Download Template (.xlsx)"** to get a ready-made spreadsheet template.
+  - Click **"📊 Import Tags from Excel / CSV"** to load dozens or hundreds of categories instantly.
+  - Click **"📤 Export Tags"** to backup your current category catalog.
 
 ---
 
-### Bước 5: Xuất dữ liệu đa định dạng (Export Hub)
-Bấm vào nút **"Xuất dữ liệu ▾"** trên thanh Header:
-1. **📊 Xuất Excel (`.xlsx`) & CSV (Database)**:
-   - Mở cửa sổ **Tùy chọn Cột Dữ liệu** trực quan với **23 cột dữ liệu**.
-   - Hỗ trợ các nút chọn nhanh 1-click:
-     - `✨ Tất cả (23 cột)`: Xuất đầy đủ toàn bộ thông tin.
-     - `📌 Cơ bản (8 cột)`: Chỉ gồm STT, Tên Tag, Ngày, Tọa độ XYWH, Ghi chú.
-     - `📐 Tọa độ Pixel`: Phù hợp cho xử lý đồ họa, OpenCV.
-     - `🤖 Chuẩn YOLO`: Phù hợp huấn luyện Deep Learning / AI.
-     - `🗄️ Chuẩn Database`: Phù hợp nạp bảng SQL (PostgreSQL, MySQL, SQLite).
-2. **📄 Tải tệp JSON**: Xuất file `.json` đầy đủ danh mục `categories` và mảng tọa độ `annotations`.
-3. **🖼️ Tải ảnh kèm khung**: Tải về ảnh PNG đã vẽ sẵn các khung viền, nhãn Tag và mã ID phục vụ báo cáo.
-4. **📋 Sao chép nhanh JSON**: Copy cấu trúc tọa độ vào Clipboard chỉ với 1 click.
+### Step 3: Draw & Annotate Bounding Boxes
+- **Draw a New Box**: Click and drag your left mouse button over the target object on the canvas.
+  - The live drag preview displays: `${icon} ${id}-${name} | W×H px`.
+- **Inline Box Toolbar on Image**:
+  - Each bounding box features a clutter-free inline header: `#1 [🏷️ defect-Scratch ▾] [✕]`.
+  - Change the tag directly from the inline dropdown without needing to look at the sidebar.
+- **Move & Reposition**: Click inside any box and drag it to a new location.
+- **Resize Accurately**: Hover over any of the 4 corner circular handles and drag to adjust width and height pixel-by-pixel.
+- **Add Inspection Dates & Notes**:
+  - Click any box card in the right **Sidebar** to type a custom note or assign an inspection date.
 
 ---
 
-### Bước 6: Chuyển đổi Giao diện & Ngôn ngữ
-- **Đa ngôn ngữ**: Bấm vào nút ngôn ngữ trên Header để chuyển đổi tức thì giữa **🇻🇳 Tiếng Việt**, **🇬🇧 English**, và **🇨🇳 中文**.
-- **Chế độ Sáng / Tối**: Bấm vào biểu tượng trăng/mặt trời để chọn:
-  - ☀️ **Sáng (Light Mode)**
-  - 🌙 **Tối (Dark Mode)**
-  - 🖥️ **Hệ thống (System Mode - tự động đổi theo cài đặt Windows/macOS)**
+### Step 4: Auto-Import Coordinates from JSON
+If you have previously exported annotations or have model predictions:
+1. Click **"Open File"** $\rightarrow$ select **"📥 Import JSON Data"** (or drag & drop a `.json` file onto the browser).
+2. The application will **automatically redraw all bounding boxes**, restore custom tags, and map coordinates with 100% precision.
 
 ---
 
-## ⌨️ Phím Tắt Tiện Dụng (Keyboard Shortcuts)
+### Step 5: Multi-Format Data Export (Export Hub)
+Click the **"Export Data ▾"** button on the header:
+1. **📊 Export Excel (`.xlsx`) & CSV (Database)**:
+   - Opens the **Custom Column Selection Modal** featuring **23 selectable fields**.
+   - Use instant presets:
+     - `✨ All (23 cols)`: Full export with all available metrics.
+     - `📌 Essential (8 cols)`: Clean summary with Index, Tag, Date, XYWH coordinates, and Note.
+     - `📐 Pixel Coords`: Tailored for computer vision and OpenCV graphics.
+     - `🤖 YOLO Format`: Tailored for AI/Deep Learning model training.
+     - `🗄️ Database Format`: Clean relational schema for PostgreSQL, MySQL, and SQLite.
+2. **📄 Download JSON**: Exports the full JSON structure including `categories: [...]` and `annotations: [...]`.
+3. **🖼️ Download Annotated Image**: Exports a high-resolution PNG image with all bounding boxes and `#1 [ID-Name]` badges rendered directly onto the canvas.
+4. **📋 Copy JSON to Clipboard**: Copies the full JSON data in one click for quick pasting.
 
-| Phím tắt | Chức năng |
+---
+
+### Step 6: Customize Language & Theme
+- **Multi-Language**: Click the language switcher in the header to instantly translate the UI into **English 🇬🇧**, **Vietnamese 🇻🇳**, or **Chinese 🇨🇳**.
+- **Light / Dark / System Mode**: Click the theme toggle button to choose between:
+  - ☀️ **Light Mode**
+  - 🌙 **Dark Mode**
+  - 🖥️ **System Mode** (automatically synchronizes with your OS dark/light mode preference)
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
 | :---: | :--- |
-| **`1` đến `9`** | Gán nhanh Tag thứ 1 $\rightarrow$ 9 cho khung đang chọn (hoặc đặt Tag mặc định sắp vẽ) |
-| **`Delete` / `Backspace`** | Xóa khung đang chọn |
-| **`Ctrl + Z` / `Cmd + Z`** | Hoàn tác (Undo) khung vừa vẽ gần nhất |
-| **Kéo chuột trái** | Vẽ khung chữ nhật mới trên ảnh |
-| **Kéo góc tròn** | Co giãn chiều dài / chiều rộng của khung |
+| **`1` – `9`** | Quickly assign the 1st through 9th Tag to the selected box (or set default tag for the next box) |
+| **`Delete` / `Backspace`** | Delete the currently selected bounding box |
+| **`Ctrl + Z` / `Cmd + Z`** | Undo the most recently drawn bounding box |
+| **Left Click + Drag** | Draw a new rectangular bounding box on the image |
+| **Corner Drag** | Resize the bounding box from any of its 4 corner handles |
 
 ---
 
-## 📊 Bảng Quy Chuẩn 23 Cột Dữ Liệu Excel / Database
+## 📊 23-Column Database & Excel Schema Reference
 
-Khi xuất file Excel hoặc CSV, dữ liệu được chuẩn hóa thành 23 trường:
+When exporting to Excel (`.xlsx`) or CSV, data is structured into 23 standardized fields:
 
-| STT | Tên cột Excel / CSV | Kiểu dữ liệu | Ý nghĩa chi tiết |
+| # | Column Name | Data Type | Description |
 | :---: | :--- | :--- | :--- |
-| 1 | `ID` | String / BigInt | Mã định danh duy nhất của khung hình |
-| 2 | `STT` | Integer | Số thứ tự của khung (1, 2, 3...) |
-| 3 | `IMAGE_NAME` | String | Tên tệp tin hình ảnh gốc |
-| 4 | `IMAGE_WIDTH` | Integer | Chiều rộng gốc của ảnh (pixels) |
-| 5 | `IMAGE_HEIGHT` | Integer | Chiều cao gốc của ảnh (pixels) |
-| 6 | `TAG_ID` | String | Mã định danh của Tag (VD: `person`, `defect_01`, `p01`) |
-| 7 | `CLASS_ID` | Integer | Số thứ tự phân lớp theo chuẩn YOLO (0, 1, 2...) |
-| 8 | `TAG_NAME` | String | Tên nhãn hiển thị (VD: `Người`, `Sản phẩm lỗi`) |
-| 9 | `TAG_ICON` | String | Biểu tượng cảm xúc của Tag (Emoji) |
-| 10 | `DATE_ISO` | Date (YYYY-MM-DD) | Ngày tháng theo chuẩn quốc tế ISO 8601 |
-| 11 | `DATE_VN` | String (DD/MM/YYYY) | Ngày tháng theo chuẩn Việt Nam |
-| 12 | `NOTE` | String | Ghi chú riêng cho khung hình |
-| 13 | `X` | Integer | Tọa độ góc trên bên trái trục X (pixel) |
-| 14 | `Y` | Integer | Tọa độ góc trên bên trái trục Y (pixel) |
-| 15 | `WIDTH` | Integer | Chiều rộng khung hình (pixel) |
-| 16 | `HEIGHT` | Integer | Chiều cao khung hình (pixel) |
-| 17 | `X_MAX` | Integer | Tọa độ mép phải `(X + WIDTH)` (pixel) |
-| 18 | `Y_MAX` | Integer | Tọa độ đáy dưới `(Y + HEIGHT)` (pixel) |
-| 19 | `X_CENTER_NORM` | Float (0.0000 - 1.0000) | Tọa độ tâm X chuẩn hóa YOLO |
-| 20 | `Y_CENTER_NORM` | Float (0.0000 - 1.0000) | Tọa độ tâm Y chuẩn hóa YOLO |
-| 21 | `WIDTH_NORM` | Float (0.0000 - 1.0000) | Chiều rộng chuẩn hóa YOLO |
-| 22 | `HEIGHT_NORM` | Float (0.0000 - 1.0000) | Chiều cao chuẩn hóa YOLO |
-| 23 | `CREATED_AT` | Timestamp (ISO 8601) | Thời điểm xuất dữ liệu |
+| 1 | `ID` | String / BigInt | Unique timestamp identifier for the box |
+| 2 | `STT` | Integer | Sequence index (1, 2, 3...) |
+| 3 | `IMAGE_NAME` | String | Source image file name |
+| 4 | `IMAGE_WIDTH` | Integer | Original image width in pixels |
+| 5 | `IMAGE_HEIGHT` | Integer | Original image height in pixels |
+| 6 | `TAG_ID` | String | Unique slug ID of the tag (e.g., `person`, `defect_01`, `p01`) |
+| 7 | `CLASS_ID` | Integer | Zero-indexed class number for YOLO training (0, 1, 2...) |
+| 8 | `TAG_NAME` | String | Display name of the tag (e.g., `Person`, `Defective Item`) |
+| 9 | `TAG_ICON` | String | Emoji icon assigned to the tag |
+| 10 | `DATE_ISO` | Date (YYYY-MM-DD) | Standard ISO 8601 date format |
+| 11 | `DATE_VN` | String (DD/MM/YYYY) | Vietnamese localized date format |
+| 12 | `NOTE` | String | Custom note attached to the bounding box |
+| 13 | `X` | Integer | Top-left corner X coordinate (pixels) |
+| 14 | `Y` | Integer | Top-left corner Y coordinate (pixels) |
+| 15 | `WIDTH` | Integer | Box width (pixels) |
+| 16 | `HEIGHT` | Integer | Box height (pixels) |
+| 17 | `X_MAX` | Integer | Right edge coordinate `(X + WIDTH)` (pixels) |
+| 18 | `Y_MAX` | Integer | Bottom edge coordinate `(Y + HEIGHT)` (pixels) |
+| 19 | `X_CENTER_NORM` | Float (0.0000 - 1.0000) | Normalized center X coordinate (YOLO format) |
+| 20 | `Y_CENTER_NORM` | Float (0.0000 - 1.0000) | Normalized center Y coordinate (YOLO format) |
+| 21 | `WIDTH_NORM` | Float (0.0000 - 1.0000) | Normalized width (YOLO format) |
+| 22 | `HEIGHT_NORM` | Float (0.0000 - 1.0000) | Normalized height (YOLO format) |
+| 23 | `CREATED_AT` | Timestamp (ISO 8601) | Record export timestamp |
 
 ---
 
-## 🤖 Công Thức Chuẩn Hóa Tọa Độ YOLO AI
+## 🤖 YOLO AI Coordinate Normalization Formula
 
 $$\text{X\_CENTER\_NORM} = \frac{x + w / 2}{W_{\text{image}}}, \quad \text{Y\_CENTER\_NORM} = \frac{y + h / 2}{H_{\text{image}}}$$
 $$\text{WIDTH\_NORM} = \frac{w}{W_{\text{image}}}, \quad \text{HEIGHT\_NORM} = \frac{h}{H_{\text{image}}}$$
 
-*Tất cả giá trị nằm trong khoảng từ `0.000000` đến `1.000000`, sẵn sàng nạp trực tiếp vào tệp nhãn YOLO (`.txt`).*
+*All normalized values range from `0.000000` to `1.000000`, matching the standard YOLO `.txt` annotation format:*
+```text
+<class_id> <x_center_norm> <y_center_norm> <width_norm> <height_norm>
+```
 
 ---
 
-## 🖼️ Tích Hợp Vào Trang Web Khác Qua IFrame (Widget)
+## 🖼️ IFrame Widget Integration
 
-Bạn có thể nhúng BBox Studio vào bất kỳ ứng dụng nào (React, Vue, Angular, Laravel, Django, WordPress...):
+Embed **BBox Studio** into any web application (React, Vue, Angular, Laravel, Django, WordPress, Vanilla JS):
 
 ```html
-<!-- Nhúng iframe -->
+<!-- Embed the widget -->
 <iframe id="bboxFrame" src="https://laitran27.github.io/bbox-studio/" 
         width="100%" height="800px" style="border: none; border-radius: 12px;"></iframe>
 
 <script>
   const bboxFrame = document.getElementById('bboxFrame');
 
-  // Lắng nghe dữ liệu xuất ra từ BBox Studio
+  // Listen for exported data from BBox Studio
   window.addEventListener('message', (event) => {
     if (event.data?.type === 'BBOX_STUDIO_EXPORT') {
-      console.log('Tọa độ các khung:', event.data.data.annotations);
+      console.log('Received bounding boxes:', event.data.data.annotations);
     }
   });
 
-  // Ra lệnh yêu cầu BBox Studio trả về tọa độ
-  function layToaDo() {
+  // Request bounding box coordinates from parent
+  function getCoordinates() {
     bboxFrame.contentWindow.postMessage({ type: 'BBOX_STUDIO_GET_DATA' }, '*');
+  }
+
+  // Load an image into the iframe programmatically
+  function loadImage(imageUrl) {
+    bboxFrame.contentWindow.postMessage({ 
+      type: 'BBOX_STUDIO_LOAD_IMAGE', 
+      imageUrl: imageUrl 
+    }, '*');
   }
 </script>
 ```
 
-👉 **Xem tài liệu chi tiết và code mẫu React/Vue:** [**`README_IFRAME.md`**](README_IFRAME.md)
+👉 **Full IFrame Documentation with React 18+ & Vue 3 Code Samples:** [**`README_IFRAME.md`**](README_IFRAME.md)
 
 ---
 
-## 🚀 Hướng Dẫn Tải Về & Chạy Cục Bộ (Local Setup)
+## 🚀 Local Setup & Quick Start
+
+Because the project is 100% client-side, setup takes less than 30 seconds:
 
 ```bash
-# 1. Clone repository về máy
+# 1. Clone the repository
 git clone https://github.com/laitran27/bbox-studio.git
 cd bbox-studio
 
-# 2. Khởi chạy
-# Cách A: Trên Windows, chỉ cần click đúp vào file start.bat
-# Cách B: Dùng Node.js
+# 2. Launch the application
+# Option A: On Windows, double-click start.bat
+# Option B: Using Node.js
 npm start
 
-# Hoặc dùng bất kỳ máy chủ tĩnh nào (Python, Live Server...)
+# Option C: Using Python
 python -m http.server 3000
 ```
-Mở trình duyệt tại: `http://localhost:3000`
+Open your browser at: `http://localhost:3000`
 
 ---
 
-## 🧪 Kiểm Thử Tự Động (Automated Testing)
+## 🧪 Automated Testing
 
-Dự án có sẵn bộ test tự động kiểm tra toàn diện chức năng:
+The project includes an automated end-to-end CDP test suite (running in headless Microsoft Edge / Chromium):
+
 ```bash
 npm test
 ```
+*Verifies: Multi-language switching, Dark/Light mode, Canvas drawing, JSON auto-import, Excel 23-column export, Tag ID management, and IFrame bidirectional postMessage communication.*
 
 ---
 
-## 📄 Bản Quyền (License)
+## 🤝 Contributing
 
-Dự án được phân phối theo giấy phép tự do nguồn mở **[MIT License](LICENSE)**. Bạn được toàn quyền tải về, chỉnh sửa và tích hợp vào các dự án thương mại hoàn toàn miễn phí.
+Contributions, feature requests, and bug reports are warmly welcome!
+1. Fork the Project: `git fork https://github.com/laitran27/bbox-studio`
+2. Create your Feature Branch: `git checkout -b feature/AmazingFeature`
+3. Commit your Changes: `git commit -m "feat: add AmazingFeature"`
+4. Push to the Branch: `git push origin feature/AmazingFeature`
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+Distributed under the **[MIT License](LICENSE)**. You are free to use, modify, and distribute this software for personal or commercial projects.
 
 <div align="center">
-⭐ Nếu bạn thấy dự án hữu ích, hãy tặng một <b>Star</b> trên GitHub nhé! ⭐
+⭐ If you find this tool helpful, please give it a <b>Star</b> on GitHub! ⭐
 </div>
