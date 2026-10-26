@@ -1,0 +1,146 @@
+:root {
+    --bg-main: #fff8f5;
+    --bg-panel: rgba(255, 255, 255, 0.92);
+    --border-soft: #fed7aa;
+    --accent-grad: linear-gradient(135deg, #ff2a6d 0%, #ff7b00 50%, #a855f7 100%);
+    --checker-a: #fff1eb;
+    --checker-b: #ffe4d6;
+}
+
+body.theme-tropical {
+    --bg-main: #f3faf7;
+    --bg-panel: rgba(255, 255, 255, 0.92);
+    --border-soft: #a7f3d0;
+    --accent-grad: linear-gradient(135deg, #10b981 0%, #f59e0b 50%, #ec4899 100%);
+    --checker-a: #ecfdf5;
+    --checker-b: #d1fae5;
+}
+
+body.theme-neon {
+    --bg-main: #fdf4ff;
+    --bg-panel: rgba(255, 255, 255, 0.92);
+    --border-soft: #f5d0fe;
+    --accent-grad: linear-gradient(135deg, #d946ef 0%, #f43f5e 50%, #8b5cf6 100%);
+    --checker-a: #fae8ff;
+    --checker-b: #f3e8ff;
+}
+
+/* ========================================== */
+/* DARK MODE CHUYÊN NGHIỆP GIẢM MỎI MẮT     */
+/* ========================================== */
+html.dark, body.dark {
+    --bg-main: #0c0f17;
+    --bg-panel: rgba(18, 24, 38, 0.96);
+    --border-soft: #334155;
+    --accent-grad: linear-gradient(135deg, #ff2a6d 0%, #ff7b00 50%, #a855f7 100%);
+    --checker-a: #0f172a;
+    --checker-b: #1e293b;
+    color-scheme: dark;
+}
+
+html.dark body.theme-tropical, body.dark.theme-tropical {
+    --bg-main: #051b12;
+    --bg-panel: rgba(6, 32, 22, 0.96);
+    --border-soft: #065f46;
+    --checker-a: #062b1e;
+    --checker-b: #083324;
+}
+
+html.dark body.theme-neon, body.dark.theme-neon {
+    --bg-main: #140b20;
+    --bg-panel: rgba(22, 12, 36, 0.96);
+    --border-soft: #701a75;
+    --checker-a: #1e1030;
+    --checker-b: #271440;
+}
+
+body {
+    background-color: var(--bg-main);
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Nền caro nghệ thuật cho vùng chứa ảnh */
+.bg-creative-checkerboard {
+    background-color: var(--checker-a);
+    background-image: 
+        linear-gradient(45deg, var(--checker-b) 25%, transparent 25%), 
+        linear-gradient(-45deg, var(--checker-b) 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, var(--checker-b) 75%), 
+        linear-gradient(-45deg, transparent 75%, var(--checker-b) 75%);
+    background-size: 24px 24px;
+    background-position: 0 0, 0 12px, 12px -12px, -12px 0px;
+    transition: background-color 0.25s ease;
+}
+
+.bg-vibrant-gradient {
+    background-image: var(--accent-grad);
+}
+
+/* Thanh cuộn sinh động */
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 123, 0, 0.06);
+    border-radius: 8px;
+}
+
+html.dark ::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #ff5e62, #ff9966);
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #ff3366, #ff7b00);
+}
+
+/* Ẩn thanh cuộn cho các container cuộn ngang tiện lợi */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+canvas {
+    touch-action: none;
+}
+
+/* Góc kéo thay đổi kích thước khung trực tiếp trên ảnh */
+.resize-handle {
+    width: 11px;
+    height: 11px;
+    background: #ffffff;
+    border: 2.5px solid currentColor;
+    border-radius: 4px;
+    position: absolute;
+    z-index: 30;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    transition: transform 0.12s ease;
+}
+
+html.dark .resize-handle {
+    background: #0f172a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.resize-handle:hover {
+    transform: scale(1.35);
+}
+
+/* Thanh Combo gắn trực tiếp trên từng khung hình */
+.inline-box-toolbar {
+    box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.25), 0 0 0 1.5px rgba(255, 255, 255, 0.9);
+}
+
+html.dark .inline-box-toolbar {
+    box-shadow: 0 8px 22px -3px rgba(0, 0, 0, 0.65), 0 0 0 1.5px rgba(255, 255, 255, 0.25);
+}

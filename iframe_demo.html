@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Tích Hợp BBox Studio Vào Trang Web Cha Qua Iframe</title>
+    <!-- Tailwind CSS qua CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        code, pre { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 p-4 md:p-6 min-h-screen">
+
+    <div class="max-w-7xl mx-auto space-y-4">
+        
+        <!-- Thanh tiêu đề của Website Cha -->
+        <header class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></span>
+                    <h1 class="text-lg md:text-xl font-extrabold text-slate-900 tracking-tight">
+                        Hệ Thống Quản Lý Sản Phẩm (Host Website)
+                    </h1>
+                    <span class="text-xs bg-blue-100 text-blue-700 font-bold px-2.5 py-0.5 rounded-full border border-blue-200">
+                        Trang Web Cha (Parent Page)
+                    </span>
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5">
+                    Minh họa cách nhúng công cụ BBox Studio qua thẻ <code>&lt;iframe&gt;</code> và giao tiếp 2 chiều bằng <code>window.postMessage</code>
+                </p>
+            </div>
+
+            <!-- Nút điều khiển từ Website Cha gửi vào Iframe -->
+            <div class="flex items-center gap-2 flex-wrap">
+                <button onclick="sendLoadSampleImage()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                    <span>🖼️</span> Nạp ảnh từ URL
+                </button>
+                <button onclick="sendLoadSampleJson()" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                    <span>📥</span> Nạp JSON tọa độ
+                </button>
+                <button onclick="requestDataFromIframe()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                    <span>💾</span> Lấy dữ liệu lưu vào DB
+                </button>
+                <button onclick="toggleIframeDarkMode()" id="btnToggleDark" class="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition cursor-pointer">
+                    🌙 Chuyển Dark/Light
+                </button>
+            </div>
+        </header>
+
+        <!-- Thẻ Iframe nhúng BBox Creative Studio -->
+        <div class="bg-white rounded-3xl p-2 shadow-sm border border-slate-200 overflow-hidden">
+            <iframe id="bboxFrame"
+                    src="./index.html?mode=system&lang=vi"
+                    class="w-full h-[680px] rounded-2xl border border-slate-200"
+                    allow="clipboard-write; clipboard-read"
+                    title="BBox Creative Studio Widget">
+            </iframe>
+        </div>
+
+        <!-- Bảng hiển thị thông tin nhận được từ Iframe theo thời gian thực -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <!-- Cột trái: Log tin nhắn postMessage -->
+            <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 flex flex-col h-64">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                    <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        Log tin nhắn nhận từ Iframe (postMessage)
+                    </span>
+                    <button onclick="clearLogs()" class="text-[11px] text-slate-400 hover:text-slate-600">Xóa log</button>
+                </div>
+                <div id="messageLogs" class="flex-1 overflow-y-auto p-2 space-y-1.5 text-[11px] font-mono text-slate-600">
+                    <div class="text-slate-400 italic">Đang chờ sự kiện từ iframe...</div>
+                </div>
+            </div>
+
+            <!-- Cột phải: Dữ liệu JSON nhận được khi bấm "Lấy dữ liệu lưu vào DB" -->
+            <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 flex flex-col h-64">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                    <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                        Dữ liệu Database nhận từ Iframe
+                    </span>
+                    <span id="boxCountDisplay" class="text-xs font-bold text-purple-600">0 khung</span>
+                </div>
+                <pre id="receivedDataDisplay" class="flex-1 overflow-y-auto bg-slate-900 text-amber-300 p-3 rounded-xl text-[11px] font-mono select-all">Chưa có dữ liệu nào được yêu cầu.</pre>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script giao tiếp 2 chiều của Website Cha -->
+    <script>
+        const iframe = document.getElementById('bboxFrame');
+        const logsContainer = document.getElementById('messageLogs');
+        const dataDisplay = document.getElementById('receivedDataDisplay');
+        const boxCountDisplay = document.getElementById('boxCountDisplay');
+
+        let isDark = false;
+
+        function logEvent(title, detail) {
+            const row = document.createElement('div');
+            row.className = 'p-1.5 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-between';
+            row.innerHTML = `
+                <span class="font-bold text-slate-800">${title}</span>
+                <span class="text-slate-500 text-[10px]">${new Date().toLocaleTimeString()}</span>
+            `;
+            if (detail) {
+                const sub = document.createElement('div');
+                sub.className = 'text-[10px] text-slate-500 mt-0.5 truncate max-w-xs';
+                sub.textContent = typeof detail === 'object' ? JSON.stringify(detail) : String(detail);
+                row.appendChild(sub);
+            }
+            logsContainer.prepend(row);
+        }
+
+        function clearLogs() {
+            logsContainer.innerHTML = '<div class="text-slate-400 italic">Đã xóa log.</div>';
+        }
+
+        // LẮNG NGHE SỰ KIỆN TỪ IFRAME GỬI LÊN
+        window.addEventListener('message', (event) => {
+            const msg = event.data;
+            if (!msg || typeof msg !== 'object') return;
+
+            // Kiểm tra nguồn gửi từ BBox Studio
+            if (msg.source === 'bbox-creative-studio') {
+                logEvent(`[${msg.type}]`, msg);
+
+                if (msg.type === 'BBOX_READY') {
+                    logEvent('🟢 Iframe đã sẵn sàng!', msg.version);
+                }
+
+                if (msg.type === 'BOXES_UPDATED') {
+                    boxCountDisplay.textContent = `${msg.count} khung`;
+                }
+
+                if (msg.type === 'DATA_RESPONSE') {
+                    dataDisplay.textContent = JSON.stringify(msg.data, null, 2);
+                    boxCountDisplay.textContent = `${msg.totalBoxes} khung`;
+                    logEvent('✅ Đã nhận dữ liệu từ iframe', `Tổng ${msg.totalBoxes} khung`);
+                }
+            }
+        });
+
+        // 1. GỬI LỆNH NẠP ẢNH TỪ URL
+        function sendLoadSampleImage() {
+            // Có thể dùng ảnh bất kỳ hoặc demo gradient
+            const sampleUrl = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1000';
+            iframe.contentWindow.postMessage({
+                action: 'LOAD_IMAGE',
+                url: sampleUrl,
+                name: 'giay_the_thao_do.jpg'
+            }, '*');
+            logEvent('👉 Gửi LOAD_IMAGE sang iframe', sampleUrl);
+        }
+
+        // 2. GỬI LỆNH NẠP JSON TỌA ĐỘ MẪU
+        function sendLoadSampleJson() {
+            const sampleAnnotations = {
+                image_name: "giay_the_thao_do.jpg",
+                annotations: [
+                    {
+                        tag_name: "Thân giày",
+                        date_iso: "2026-11-01",
+                        note: "Chất liệu Mesh thoáng khí",
+                        coordinates: { x: 120, y: 140, width: 380, height: 260 }
+                    },
+                    {
+                        tag_name: "Đế giày",
+                        date_iso: "2026-11-05",
+                        note: "Đệm khí Air đàn hồi cao",
+                        coordinates: { x: 100, y: 390, width: 440, height: 110 }
+                    }
+                ]
+            };
+            iframe.contentWindow.postMessage({
+                action: 'IMPORT_JSON',
+                data: sampleAnnotations
+            }, '*');
+            logEvent('👉 Gửi IMPORT_JSON sang iframe', `${sampleAnnotations.annotations.length} khung`);
+        }
+
+        // 3. YÊU CẦU LẤY DỮ LIỆU TỪ IFRAME
+        function requestDataFromIframe() {
+            iframe.contentWindow.postMessage({
+                action: 'GET_DATA'
+            }, '*');
+            logEvent('👉 Gửi GET_DATA yêu cầu iframe trả tọa độ');
+        }
+
+        // 4. ĐỔI DARK / LIGHT MODE
+        function toggleIframeDarkMode() {
+            isDark = !isDark;
+            const mode = isDark ? 'dark' : 'light';
+            iframe.contentWindow.postMessage({
+                action: 'SET_MODE',
+                mode: mode
+            }, '*');
+            document.getElementById('btnToggleDark').textContent = isDark ? '☀️ Chuyển Light Mode' : '🌙 Chuyển Dark Mode';
+            logEvent(`👉 Gửi SET_MODE = ${mode}`);
+        }
+    </script>
+</body>
+</html>

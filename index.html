@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBox Creative Studio - Đóng Khung Ảnh, Gắn Tag & Chọn Ngày</title>
+
+    <!-- Tailwind CSS qua CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Thư viện SheetJS xuất Excel (.xlsx) qua CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Cấu hình Font và Chế độ Tối (Dark Mode) cho Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- File CSS riêng biệt -->
+    <link rel="stylesheet" href="./css/styles.css">
+
+    <!-- Điểm khởi chạy JavaScript Modular (ES Modules) -->
+    <script type="module" src="./js/app.js"></script>
+</head>
+<body class="text-stone-800 dark:text-stone-100 font-sans h-screen flex flex-col overflow-hidden select-none">
+
+    <!-- Thanh điều hướng trên cùng (Vibrant Creative Header) -->
+    <header class="h-16 bg-white/90 dark:bg-stone-900/95 backdrop-blur-xl border-b-2 border-orange-200/80 dark:border-stone-800 px-4 lg:px-6 flex items-center justify-between shrink-0 z-30 shadow-sm shadow-orange-500/5">
+        <!-- Logo & Tên ứng dụng -->
+        <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-2xl bg-vibrant-gradient flex items-center justify-center shadow-lg shadow-rose-500/30 rotate-3 hover:rotate-0 transition-transform">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                </svg>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 data-i18n="app_title" class="font-extrabold text-base lg:text-lg tracking-tight bg-gradient-to-r from-rose-600 via-orange-500 to-purple-600 bg-clip-text text-transparent">
+                        BBox Creative Studio
+                    </h1>
+                    <span class="text-[11px] font-mono font-bold uppercase px-2 py-0.5 bg-gradient-to-r from-rose-500/15 to-orange-500/15 text-rose-600 dark:text-rose-400 border border-rose-300 dark:border-rose-800 rounded-full">
+                        v3.2 Streamlined
+                    </span>
+                </div>
+                <p data-i18n="app_subtitle" class="text-xs text-stone-500 dark:text-stone-400 hidden sm:block font-medium">Gắn nhãn Tag trực tiếp trên từng khung hình & quản lý tọa độ</p>
+            </div>
+        </div>
+
+        <!-- CÁC CỤM CHỨC NĂNG HỢP NHẤT DẠNG COMBO TRÊN HEADER -->
+        <div class="flex items-center gap-2 sm:gap-3">
+            
+            <!-- COMBO 1: MỞ TỆP / NẠP DỮ LIỆU (Split Button Dropdown) -->
+            <div class="relative inline-flex rounded-2xl shadow-sm z-40" id="fileMenuContainer">
+                <input type="file" id="fileInput" accept="image/*" class="hidden">
+                <input type="file" id="jsonFileInput" accept=".json,application/json" class="hidden">
+
+                <!-- Nút chính: Tải ảnh lên -->
+                <button onclick="document.getElementById('fileInput').click()"
+                        class="px-3.5 py-2 bg-vibrant-gradient hover:opacity-95 active:scale-95 text-white text-xs sm:text-sm font-bold rounded-l-2xl transition flex items-center gap-1.5 cursor-pointer shadow-md shadow-rose-500/20">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                    </svg>
+                    <span data-i18n="btn_upload_img">Tải ảnh lên</span>
+                </button>
+                
+                <!-- Mũi tên mở rộng Menu Nạp tệp (Nhập JSON, Demo) -->
+                <button onclick="toggleFileDropdown(event)" id="btnFileDropdownTrigger"
+                        class="px-2 py-2 bg-gradient-to-r from-orange-500 to-purple-600 text-white text-xs font-bold rounded-r-2xl border-l border-white/20 hover:opacity-95 transition flex items-center cursor-pointer shadow-md shadow-purple-500/20"
+                        title="Tùy chọn mở tệp: Nhập JSON, nạp ảnh mẫu">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                
+                <!-- Menu thả xuống của Tệp -->
+                <div id="fileDropdownMenu" class="hidden absolute left-0 top-full mt-1.5 w-56 bg-white dark:bg-stone-800 rounded-2xl shadow-2xl border-2 border-orange-200 dark:border-stone-700 py-1.5 z-50">
+                    <button onclick="document.getElementById('fileInput').click(); closeAllDropdowns();"
+                            class="w-full px-3.5 py-2 text-left text-xs font-bold text-stone-700 dark:text-stone-200 hover:bg-orange-50 dark:hover:bg-stone-700/80 flex items-center gap-2 transition cursor-pointer">
+                        <span class="text-base">🖼️</span>
+                        <div>
+                            <div data-i18n="btn_upload_img">Tải ảnh lên</div>
+                            <div data-i18n="btn_upload_img_desc" class="text-[10px] text-stone-400 font-normal">JPG, PNG, WebP...</div>
+                        </div>
+                    </button>
+                    <button onclick="triggerImportJson(); closeAllDropdowns();" id="btnImportJsonHeader"
+                            class="w-full px-3.5 py-2 text-left text-xs font-bold text-stone-700 dark:text-stone-200 hover:bg-purple-50 dark:hover:bg-purple-950/50 flex items-center gap-2 transition cursor-pointer">
+                        <span class="text-base">📥</span>
+                        <div>
+                            <div data-i18n="btn_import_json">Nhập file JSON</div>
+                            <div data-i18n="btn_import_json_desc" class="text-[10px] text-stone-400 font-normal">Tự vẽ khung vào ảnh</div>
+                        </div>
+                    </button>
+                    <button onclick="loadDemoImage(); closeAllDropdowns();"
+                            class="w-full px-3.5 py-2 text-left text-xs font-bold text-stone-700 dark:text-stone-200 hover:bg-amber-50 dark:hover:bg-amber-950/50 flex items-center gap-2 transition cursor-pointer">
+                        <span class="text-base">🎨</span>
+                        <div>
+                            <div data-i18n="btn_demo_img">Ảnh mẫu sinh động</div>
+                            <div data-i18n="btn_demo_img_desc" class="text-[10px] text-stone-400 font-normal">Dùng thử ngay</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- COMBO 2: XUẤT DỮ LIỆU TỔNG HỢP (Export Hub Dropdown) -->
+            <div class="relative inline-block text-left z-40" id="exportMenuContainer">
+                <button onclick="toggleExportDropdown(event)" id="btnExportDropdownTrigger"
+                        class="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm font-bold rounded-2xl border-2 border-emerald-200 dark:border-emerald-800/80 transition flex items-center gap-1.5 cursor-pointer shadow-sm">
+                    <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                    </svg>
+                    <span data-i18n="menu_export">Xuất dữ liệu</span>
+                    <svg class="w-3.5 h-3.5 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+
+                <!-- Menu thả xuống của Xuất dữ liệu -->
+                <div id="exportDropdownMenu" class="hidden absolute right-0 top-full mt-1.5 w-64 bg-white dark:bg-stone-800 rounded-2xl shadow-2xl border-2 border-emerald-200 dark:border-stone-700 py-1.5 z-50">
+                    <button onclick="exportToExcel(); closeAllDropdowns();"
+                            class="w-full px-3.5 py-2 text-left text-xs font-bold text-stone-700 dark:text-stone-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 flex items-center gap-2.5 transition cursor-pointer">
+                        <span class="text-base text-emerald-600">📊</span>
+                        <div>
+                            <div data-i18n="btn_export_excel">Xuất Excel (.xlsx Database)</div>
+                            <div data-i18n="export_excel_desc" class="text-[10px] text-stone-400 font-normal">23 cột chuẩn để import DB</div>
+                        </div>
+                    </button>
+                    <button onclick="downloadJsonFile(); closeAllDropdowns();"
+                            class="w-full px-3.5 py-2 text-left text-xs font-bold text-stone-700 dark:text-stone-200 hover:bg-rose-50 dark:hover:bg-rose-950/50 flex items-center gap-2.5 transition cursor-pointer">
+                        <span class="text-base text-rose-500">📦</span>
+                        <div>
+                            <div data-i18n="btn_download_json_action">Tải file .JSON</div>
+                            <div data-i18n="export_json_desc" class="text-[10px] text-stone-400 font-normal">Tọa độ XYWH, XYXY, YOLO</div>
+                        </div>
+                    </button>
+                    <button onclick="downloadAnnotatedImage(); closeAllDropdowns();"
+                            class="w-full px-3.5 py-2 text-left text-xs font-bold text-stone-700 dark:text-stone-200 hover:bg-orange-50 dark:hover:bg-orange-950/50 flex items-center gap-2.5 transition cursor-pointer">
+                        <span class="text-base text-orange-500">🖼️</span>
+                        <div>
+                            <div data-i18n="btn_save_boxed_img">Lưu ảnh đã vẽ khung (PNG)</div>
+                            <div data-i18n="export_img_desc" class="text-[10px] text-stone-400 font-normal">Kèm Tag & Ngày trên ảnh</div>
+                        </div>
+                    </button>
+                    <div class="border-t border-stone-100 dark:border-stone-700 my-1"></div>
+                    <button onclick="copyAllCoordsToClipboard(); closeAllDropdowns();"
+                            class="w-full px-3.5 py-1.5 text-left text-xs font-bold text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-700/80 flex items-center gap-2.5 transition cursor-pointer">
+                        <span class="text-stone-400">📋</span>
+                        <span data-i18n="btn_copy_json_action">Sao chép JSON vào Clipboard</span>
+                    </button>
+                    <button onclick="toggleJsonModal(); closeAllDropdowns();"
+                            class="w-full px-3.5 py-1.5 text-left text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 flex items-center gap-2.5 transition cursor-pointer">
+                        <span>🔍</span>
+                        <span data-i18n="btn_zoom_json">Phóng to xem cấu trúc JSON</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Vách ngăn dọc tinh tế -->
+            <div class="h-6 w-px bg-orange-200 dark:bg-stone-700 hidden sm:block"></div>
+
+            <!-- COMBO 3: BỘ CHỌN NGÔN NGỮ (Compact Select Combo) -->
+            <div class="relative">
+                <select id="langSelectCombo" onchange="setAppLanguage(this.value)"
+                        data-i18n-title="lang_switcher_title"
+                        title="Ngôn ngữ / Language / 语言"
+                        class="bg-orange-50/90 dark:bg-stone-800 border border-orange-200 dark:border-stone-700 focus:border-rose-400 rounded-2xl px-2.5 py-1.5 text-xs font-bold text-stone-700 dark:text-stone-200 outline-none cursor-pointer shadow-sm">
+                    <option value="vi">🇻🇳 VI</option>
+                    <option value="en">🇬🇧 EN</option>
+                    <option value="zh">🇨🇳 中文</option>
+                </select>
+            </div>
+
+            <!-- COMBO 4: BẢNG MÀU CHỦ ĐỀ (Compact Theme Select) -->
+            <div class="hidden xl:block relative">
+                <select id="creativeThemeSelect" onchange="setCreativeTheme(this.value)"
+                        data-i18n-title="theme_switcher_title"
+                        title="Bảng màu sáng tạo"
+                        class="bg-orange-50/90 dark:bg-stone-800 border border-orange-200 dark:border-stone-700 focus:border-rose-400 rounded-2xl px-2.5 py-1.5 text-xs font-bold text-stone-700 dark:text-stone-200 outline-none cursor-pointer shadow-sm">
+                    <option value="sunset" data-i18n="theme_sunset">🌅 Sunset Pop</option>
+                    <option value="tropical" data-i18n="theme_tropical">🍉 Tropical Fiesta</option>
+                    <option value="neon" data-i18n="theme_berry">🔮 Berry Studio</option>
+                </select>
+            </div>
+
+            <!-- COMBO 5: CHẾ ĐỘ HIỂN THỊ (Sáng / Tối / Hệ thống Segmented Pill) -->
+            <div class="flex items-center bg-orange-50/90 dark:bg-stone-800/90 border border-orange-200 dark:border-stone-700 rounded-2xl p-1 gap-0.5"
+                 data-i18n-title="mode_switcher_title" title="Chế độ giao diện: Sáng / Tối / Hệ thống">
+                <button onclick="setColorMode('light')" id="modeBtn-light" class="px-2 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer" title="Giao diện Sáng">
+                    <span>☀️</span>
+                </button>
+                <button onclick="setColorMode('dark')" id="modeBtn-dark" class="px-2 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer" title="Giao diện Tối">
+                    <span>🌙</span>
+                </button>
+                <button onclick="setColorMode('system')" id="modeBtn-system" class="px-2 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer" title="Theo hệ thống Windows">
+                    <span>🖥️</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Không gian làm việc chính (Main Content) -->
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        
+        <!-- Khu vực Trái: Vùng vẽ Canvas + Lớp DOM Overlay chứa Combo trực tiếp trên từng khung -->
+        <section class="flex-1 flex flex-col relative overflow-hidden bg-creative-checkerboard">
+            
+            <!-- Thanh trạng thái / Thông số tọa độ + Ngày mặc định -->
+            <div class="min-h-[46px] bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border-b border-orange-200/80 dark:border-stone-800 px-4 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs z-20 shrink-0">
+                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+                    <div id="imageResolutionBadge" class="flex items-center gap-1.5 text-stone-700 dark:text-stone-200 font-mono bg-orange-50/90 dark:bg-stone-800/90 px-3 py-1 rounded-xl border border-orange-200 dark:border-stone-700 shrink-0 font-semibold">
+                        <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-rose-500 to-orange-500"></span>
+                        <span id="imgNameDisplay" data-i18n="img_no_image" class="truncate max-w-[130px]">Chưa có ảnh</span>
+                        <span class="text-orange-300 dark:text-stone-500">|</span>
+                        <span id="imgSizeDisplay" class="text-rose-600 dark:text-rose-400">0 × 0 px</span>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 text-stone-600 dark:text-stone-300 font-mono bg-purple-50/90 dark:bg-purple-950/40 px-3 py-1 rounded-xl border border-purple-200 dark:border-purple-800/70 shrink-0">
+                        <span data-i18n="cursor_label">🎯 Con trỏ:</span>
+                        <span id="liveCursorCoords" class="text-purple-700 dark:text-purple-400 font-bold">X: 0, Y: 0</span>
+                    </div>
+
+                    <div id="liveDrawingBadge" class="hidden items-center gap-1.5 text-white font-mono bg-gradient-to-r from-rose-500 to-orange-500 px-3 py-1 rounded-xl shadow-sm shrink-0 font-bold">
+                        <span data-i18n="drawing_label">📐 Đang kéo:</span>
+                        <span id="liveDragDimensions">W: 0, H: 0</span>
+                    </div>
+                </div>
+
+                <!-- Chọn Ngày mặc định trên thanh công cụ + Ẩn/Hiện Combo trên khung -->
+                <div class="flex items-center gap-2 shrink-0 ml-auto">
+                    <div class="flex items-center gap-1.5 bg-amber-50/90 dark:bg-stone-800/90 border border-amber-200 dark:border-stone-700 px-2.5 py-1 rounded-xl">
+                        <span data-i18n="default_date_label" class="text-[11px] font-bold text-amber-800 dark:text-amber-400">📅 Ngày mặc định:</span>
+                        <select id="defaultDatePresetCombo" onchange="handleDefaultDatePresetChange(this.value)" class="bg-white dark:bg-stone-900 border border-amber-300 dark:border-stone-600 rounded-lg px-1.5 py-0.5 text-[11px] font-bold text-stone-700 dark:text-stone-200 outline-none cursor-pointer">
+                            <option value="today" data-i18n="preset_today">Hôm nay</option>
+                            <option value="yesterday" data-i18n="preset_yesterday">Hôm qua</option>
+                            <option value="3days" data-i18n="preset_3days">3 ngày trước</option>
+                            <option value="week" data-i18n="preset_week">1 tuần trước</option>
+                            <option value="tomorrow" data-i18n="preset_tomorrow">Ngày mai</option>
+                            <option value="custom" data-i18n="preset_custom">Tùy chỉnh...</option>
+                        </select>
+                        <input type="date" id="defaultDateInput" onchange="handleDefaultDateManualChange(this.value)" class="bg-white dark:bg-stone-900 border border-amber-300 dark:border-stone-600 rounded-lg px-2 py-0.5 text-[11px] font-mono font-bold text-rose-600 dark:text-rose-400 outline-none cursor-pointer">
+                    </div>
+
+                    <label data-i18n-title="show_inline_combos_title" class="flex items-center gap-1.5 text-[11px] font-bold text-rose-700 dark:text-rose-300 bg-rose-50/90 dark:bg-rose-950/40 px-2.5 py-1 rounded-xl border border-rose-200 dark:border-rose-900/60 cursor-pointer hover:bg-rose-100/70 dark:hover:bg-rose-900/50 transition" title="Hiển thị nhãn Tag và nút thao tác trực tiếp trên từng khung hình">
+                        <input type="checkbox" id="showInlineCombosToggle" checked onchange="renderOverlayBoxes()" class="accent-rose-500 rounded cursor-pointer">
+                        <span data-i18n="show_inline_combos">Hiện nhãn Tag trên khung</span>
+                    </label>
+
+                    <button onclick="toggleFitMode()" id="btnFitMode" data-i18n="btn_fit_mode_fit" class="px-2.5 py-1 bg-white dark:bg-stone-800 hover:bg-orange-50 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 rounded-xl border border-orange-200 dark:border-stone-700 transition font-bold cursor-pointer shadow-sm">
+                        Vừa khung (Fit)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Thanh chọn nhanh Tag mặc định (Combo + Nút bấm nhanh + Quản lý Tag) -->
+            <div class="bg-white/95 dark:bg-stone-900/95 backdrop-blur border-b border-orange-200/80 dark:border-stone-800 px-4 py-2 flex flex-wrap items-center gap-2 z-20 shrink-0">
+                <!-- Combo chọn Tag mặc định ngay trên thanh công cụ ảnh -->
+                <div class="flex items-center gap-1.5 bg-gradient-to-r from-rose-50 to-orange-50 dark:from-stone-800 dark:to-stone-800 border-2 border-rose-200 dark:border-stone-700 px-2.5 py-1 rounded-xl shrink-0">
+                    <span data-i18n="toolbar_active_tag_label" class="text-[11px] font-extrabold text-rose-600 dark:text-rose-400 uppercase">🏷️ Combo Tag vẽ mới:</span>
+                    <select id="toolbarActiveTagCombo" onchange="setActiveTag(this.value)"
+                            class="bg-white dark:bg-stone-900 border border-rose-200 dark:border-stone-700 focus:border-rose-500 rounded-lg px-2 py-0.5 text-xs font-extrabold text-stone-800 dark:text-stone-100 outline-none cursor-pointer shadow-sm">
+                    </select>
+                </div>
+                
+                <!-- Danh sách nút Tag nhanh (Render động từ JS) -->
+                <div id="tagChipsContainer" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 flex-1"></div>
+
+                <!-- Nút Quản lý & Thêm Tag tùy chỉnh mới -->
+                <button onclick="toggleAddTagModal()" data-i18n-title="btn_manage_tags_title" class="ml-auto shrink-0 px-3 py-1.5 bg-gradient-to-r from-rose-500 to-orange-500 hover:opacity-95 text-white rounded-xl text-xs font-extrabold flex items-center gap-1 transition cursor-pointer shadow-md shadow-rose-500/20" title="Thêm Tag mới hoặc đổi tên/màu các Tag hiện có">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span data-i18n="btn_manage_tags">Quản lý / Thêm Tag</span>
+                </button>
+            </div>
+
+            <!-- Vùng chứa Canvas & Lớp Overlay tương tác trực tiếp trên từng khung -->
+            <div id="canvasViewport" class="flex-1 overflow-auto flex items-center justify-center p-6 lg:p-10 relative">
+                
+                <!-- Màn hình hướng dẫn khi chưa có ảnh -->
+                <div id="emptyUploadOverlay" class="max-w-md w-full bg-white/95 dark:bg-stone-900/95 backdrop-blur-xl border-3 border-dashed border-rose-300 dark:border-stone-700 hover:border-orange-500 dark:hover:border-rose-500 rounded-3xl p-8 text-center transition-all duration-200 shadow-2xl shadow-rose-500/10 cursor-pointer"
+                     onclick="document.getElementById('fileInput').click()">
+                    <div class="w-16 h-16 rounded-2xl bg-vibrant-gradient text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-rose-500/30">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                    </div>
+                    <h2 data-i18n="empty_upload_title" class="text-lg font-extrabold text-stone-800 dark:text-stone-100 mb-1">Tải lên hoặc Kéo thả hình ảnh vào đây</h2>
+                    <p data-i18n="empty_upload_desc" class="text-xs text-stone-500 dark:text-stone-400 mb-6 font-medium">Mỗi khung hình bạn kéo trên ảnh sẽ có sẵn Combo chọn Tag & Combo chọn Ngày gắn trực tiếp ngay trên khung đó!</p>
+                    <div class="inline-flex items-center gap-2 px-5 py-2.5 bg-vibrant-gradient text-white text-xs font-bold rounded-2xl shadow-lg shadow-rose-500/25">
+                        <span data-i18n="empty_upload_btn">✨ Chọn tệp ảnh từ máy tính</span>
+                    </div>
+                </div>
+
+                <!-- Khung bọc Canvas + Lớp DOM Overlay (#bboxOverlayLayer) nằm khớp 100% -->
+                <div id="canvasWrapper" class="relative shadow-2xl shadow-orange-950/15 dark:shadow-black/60 rounded-2xl border-2 border-white dark:border-stone-700 ring-2 ring-orange-200/80 dark:ring-stone-700/80 hidden">
+                    <canvas id="annotationCanvas" class="cursor-crosshair block rounded-2xl"></canvas>
+                    <!-- LỚP OVERLAY CHỨA CÁC KHUNG HÌNH & COMBO CHỌN TAG + NGÀY TRỰC TIẾP TRÊN ẢNH -->
+                    <div id="bboxOverlayLayer" class="absolute inset-0 pointer-events-none"></div>
+                </div>
+            </div>
+
+            <!-- Chú thích thao tác nhanh ở góc dưới -->
+            <div class="bg-white/90 dark:bg-stone-900/90 backdrop-blur border-t border-orange-200/80 dark:border-stone-800 px-4 py-2 text-[11px] text-stone-600 dark:text-stone-300 flex flex-wrap items-center justify-between gap-2 shrink-0 font-medium">
+                <div class="flex items-center gap-3 flex-wrap">
+                    <span class="flex items-center gap-1.5">
+                        <kbd data-i18n="shortcut_inline_title" class="px-2 py-0.5 bg-rose-50 dark:bg-stone-800 border border-rose-200 dark:border-stone-700 rounded-lg text-rose-600 dark:text-rose-400 font-mono font-bold">Combo trên khung</kbd>
+                        <span data-i18n="shortcut_inline_desc">Đổi Tag & Ngày trực tiếp trên từng khung ảnh</span>
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <kbd data-i18n="shortcut_drag_title" class="px-2 py-0.5 bg-orange-50 dark:bg-stone-800 border border-orange-200 dark:border-stone-700 rounded-lg text-orange-600 dark:text-orange-400 font-mono font-bold">Kéo viền / góc</kbd>
+                        <span data-i18n="shortcut_drag_desc">Di chuyển hoặc co giãn khung trực tiếp</span>
+                    </span>
+                    <span class="hidden sm:flex items-center gap-1.5">
+                        <kbd data-i18n="shortcut_keys_title" class="px-2 py-0.5 bg-purple-50 dark:bg-stone-800 border border-purple-200 dark:border-stone-700 rounded-lg text-purple-600 dark:text-purple-400 font-mono font-bold">Phím 1 - 9</kbd>
+                        <span data-i18n="shortcut_keys_desc">Đổi nhanh Tag của khung đang chọn</span>
+                    </span>
+                </div>
+                <div data-i18n="footer_coord_desc" class="text-stone-500 dark:text-stone-400">
+                    Tọa độ lưu theo <strong class="text-rose-600 dark:text-rose-400">pixel gốc</strong> kèm <strong class="text-orange-600 dark:text-orange-400">Tag & Ngày tháng</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- Khu vực Phải: Danh sách Khung, Combo Ngày & Tọa độ (Sidebar đồng bộ 2 chiều) -->
+        <aside class="w-full lg:w-[440px] xl:w-[475px] bg-white/95 dark:bg-stone-900/95 backdrop-blur-xl border-t lg:border-t-0 lg:border-l-2 border-orange-200/80 dark:border-stone-800 flex flex-col h-[48vh] lg:h-auto shrink-0 z-20 shadow-xl shadow-orange-900/5">
+            
+            <!-- Tiêu đề Sidebar & Bộ lọc -->
+            <div class="p-4 border-b border-orange-200/80 dark:border-stone-800 space-y-3 shrink-0 bg-gradient-to-r from-rose-50/50 via-orange-50/40 to-amber-50/50 dark:from-stone-900 dark:via-stone-900 dark:to-stone-900">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <h2 data-i18n="sidebar_title" class="font-extrabold text-sm uppercase tracking-wider bg-gradient-to-r from-rose-600 to-orange-600 bg-clip-text text-transparent">
+                            Danh Sách Tọa Độ & Đồng Bộ
+                        </h2>
+                        <span id="boxCountBadge" class="px-2.5 py-0.5 text-xs font-mono font-extrabold bg-vibrant-gradient text-white rounded-full shadow-sm">0</span>
+                    </div>
+
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="undoLastBox()" id="btnUndo" data-i18n-title="btn_undo_title" disabled class="p-1.5 text-xs bg-white dark:bg-stone-800 hover:bg-orange-50 dark:hover:bg-stone-700 disabled:opacity-40 text-stone-700 dark:text-stone-200 rounded-xl border border-orange-200 dark:border-stone-700 transition cursor-pointer shadow-sm" title="Hoàn tác khung vừa vẽ (Ctrl+Z)">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
+                            </svg>
+                        </button>
+                        <button onclick="clearAllBoxes()" id="btnClearAll" disabled class="px-3 py-1 text-xs bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 disabled:opacity-40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60 rounded-xl transition font-bold cursor-pointer">
+                            <span data-i18n="btn_clear_all">Xóa hết</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dropdown chọn Tag mặc định + Chuyển đổi hệ tọa độ -->
+                <div class="grid grid-cols-12 gap-2">
+                    <div class="col-span-7">
+                        <label data-i18n="tag_default_label" class="block text-[11px] font-bold text-stone-500 dark:text-stone-400 mb-1">Tag mặc định khi kéo khung:</label>
+                        <select id="activeTagSelect" onchange="setActiveTag(this.value)"
+                                class="w-full bg-white dark:bg-stone-800 border-2 border-orange-200 dark:border-stone-700 focus:border-rose-500 rounded-xl px-2.5 py-1.5 text-xs font-bold text-stone-800 dark:text-stone-100 outline-none transition cursor-pointer shadow-sm">
+                        </select>
+                    </div>
+                    <div class="col-span-5">
+                        <label data-i18n="coord_system_label" class="block text-[11px] font-bold text-stone-500 dark:text-stone-400 mb-1">Hệ tọa độ:</label>
+                        <select id="coordFormatSelect" onchange="renderBoxList()"
+                                class="w-full bg-white dark:bg-stone-800 border-2 border-orange-200 dark:border-stone-700 focus:border-rose-500 rounded-xl px-2 py-1.5 text-xs font-bold text-stone-800 dark:text-stone-100 outline-none transition cursor-pointer shadow-sm">
+                            <option value="xywh" data-i18n="coord_format_xywh">x, y, width, height</option>
+                            <option value="xyxy" data-i18n="coord_format_xyxy">xmin, ymin, xmax, ymax</option>
+                            <option value="norm" data-i18n="coord_format_norm">YOLO Chuẩn hóa (0-1)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Bộ lọc kép: Lọc theo Tag & Lọc theo Ngày -->
+                <div class="grid grid-cols-2 gap-2 pt-0.5">
+                    <div>
+                        <label data-i18n="filter_tag_label" class="block text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase mb-0.5">Lọc theo Tag:</label>
+                        <select id="filterTagSelect" onchange="handleFilterChange()"
+                                class="w-full bg-white/90 dark:bg-stone-800 border border-orange-200 dark:border-stone-700 focus:border-rose-500 rounded-xl px-2.5 py-1 text-[11px] font-semibold text-stone-700 dark:text-stone-200 outline-none transition cursor-pointer">
+                            <option value="ALL" data-i18n="filter_tag_all">Tất cả các Tag</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label data-i18n="filter_date_label" class="block text-[10px] font-bold text-stone-400 dark:text-stone-500 uppercase mb-0.5">Lọc theo Ngày:</label>
+                        <div class="flex items-center gap-1">
+                            <input type="date" id="filterDateInput" onchange="handleFilterChange()"
+                                   class="flex-1 bg-white/90 dark:bg-stone-800 border border-orange-200 dark:border-stone-700 focus:border-rose-500 rounded-xl px-2 py-0.5 text-[11px] font-mono font-semibold text-stone-700 dark:text-stone-200 outline-none cursor-pointer">
+                            <button onclick="clearDateFilter()" id="btnClearDateFilter" data-i18n-title="filter_date_clear_title" class="hidden px-2 py-1 bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 rounded-lg text-[10px] font-bold hover:bg-rose-200 dark:hover:bg-rose-900 cursor-pointer" title="Bỏ lọc ngày">✕</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danh sách cuộn chứa các thẻ tọa độ -->
+            <div id="boxListContainer" class="flex-1 overflow-y-auto p-3.5 space-y-3 bg-orange-50/30 dark:bg-stone-950/50">
+                <!-- Trạng thái trống -->
+                <div id="emptyBoxListState" class="h-full flex flex-col items-center justify-center text-center p-6 text-stone-400 dark:text-stone-500">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-100 to-orange-100 dark:from-stone-800 dark:to-stone-800 border border-rose-200 dark:border-stone-700 flex items-center justify-center mb-3 text-rose-500 dark:text-rose-400 shadow-sm">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <p data-i18n="empty_box_title" class="text-sm font-extrabold text-stone-700 dark:text-stone-200">Chưa có khung nào được đóng</p>
+                    <p data-i18n="empty_box_desc" class="text-xs text-stone-500 dark:text-stone-400 mt-1 max-w-[250px]">Hãy nhấn giữ chuột trái và kéo trên hình ảnh để đóng khung. Nhãn Tag sẽ gắn ngay trên khung vừa tạo!</p>
+                </div>
+            </div>
+
+            <!-- Khu vực Xuất dữ liệu (JSON / Excel Database / Copy) ở đáy Sidebar (ĐÃ LOẠI BỎ NÚT NHẬP JSON TRÙNG LẶP) -->
+            <div class="p-3.5 bg-white dark:bg-stone-900 border-t-2 border-orange-200/80 dark:border-stone-800 space-y-2.5 shrink-0">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-extrabold text-stone-700 dark:text-stone-200 flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-vibrant-gradient"></span>
+                        <span data-i18n="data_export_title">Dữ liệu & Xuất File (Database / JSON / Excel)</span>
+                    </span>
+                    <button onclick="toggleJsonModal()" data-i18n="btn_zoom_json" class="text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:text-orange-600 underline cursor-pointer">
+                        Phóng to JSON
+                    </button>
+                </div>
+
+                <!-- Khung xem trước JSON nhanh -->
+                <pre id="jsonQuickPreview" class="bg-stone-900 border border-stone-800 rounded-2xl p-2.5 text-[11px] font-mono text-amber-300 max-h-24 overflow-y-auto select-all shadow-inner">[]</pre>
+
+                <!-- Cụm nút hành động xuất dữ liệu (Gọn gàng, rõ ràng, không trùng lặp) -->
+                <div class="space-y-2">
+                    <!-- Hàng 1: Hai hành động xuất dữ liệu quan trọng nhất -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="exportToExcel()" id="btnExportExcel" disabled data-i18n-title="btn_export_excel_tooltip"
+                                class="py-2.5 px-2.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 disabled:opacity-40 text-emerald-800 dark:text-emerald-300 text-xs font-extrabold rounded-2xl border-2 border-emerald-200 dark:border-emerald-800/80 transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+                                title="Xuất file Excel (.xlsx) theo định dạng cột chuẩn để import vào Database">
+                            <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <span data-i18n="btn_export_excel_action">📊 Xuất Excel (DB)</span>
+                        </button>
+
+                        <button onclick="downloadJsonFile()" id="btnExportJson" disabled
+                                class="py-2.5 px-2.5 bg-vibrant-gradient hover:opacity-95 disabled:opacity-40 text-white text-xs font-extrabold rounded-2xl transition flex items-center justify-center gap-1.5 shadow-lg shadow-rose-500/25 cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            <span data-i18n="btn_download_json_action">Tải file .JSON</span>
+                        </button>
+                    </div>
+
+                    <!-- Hàng 2: Hai công cụ tiện ích phụ (Sao chép JSON & Lưu ảnh có khung) -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="copyAllCoordsToClipboard()" id="btnCopyAll" disabled
+                                class="py-1.5 px-2 bg-orange-50 hover:bg-orange-100 dark:bg-stone-800 dark:hover:bg-stone-700 disabled:opacity-40 text-orange-800 dark:text-orange-300 text-xs font-bold rounded-xl border border-orange-200 dark:border-stone-700 transition flex items-center justify-center gap-1.5 cursor-pointer">
+                            <svg class="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                            <span data-i18n="btn_copy_json_action">Sao chép JSON</span>
+                        </button>
+
+                        <button onclick="downloadAnnotatedImage()" id="btnDownloadImg" disabled
+                                class="py-1.5 px-2 bg-rose-50 hover:bg-rose-100 dark:bg-stone-800 dark:hover:bg-stone-700 disabled:opacity-40 text-rose-700 dark:text-rose-300 text-xs font-bold rounded-xl border border-rose-200 dark:border-stone-700 transition flex items-center justify-center gap-1.5 cursor-pointer">
+                            <svg class="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span data-i18n="btn_save_boxed_img">Lưu ảnh có khung</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Modal xem chi tiết JSON đầy đủ -->
+    <div id="jsonModal" class="fixed inset-0 bg-stone-900/60 dark:bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-stone-900 border-2 border-orange-200 dark:border-stone-700 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+            <div class="px-6 py-4 border-b border-orange-100 dark:border-stone-800 flex items-center justify-between bg-gradient-to-r from-rose-50 to-orange-50 dark:from-stone-800 dark:to-stone-800">
+                <h3 class="font-extrabold text-stone-800 dark:text-stone-100 text-base flex items-center gap-2">
+                    <span>📦</span> <span data-i18n="json_modal_title">Dữ liệu JSON Tọa Độ, Tag & Ngày Tháng</span>
+                </h3>
+                <button onclick="toggleJsonModal()" class="text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 p-1 rounded-xl cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-5 overflow-y-auto flex-1 bg-stone-50 dark:bg-stone-950">
+                <pre id="jsonFullModalContent" class="bg-stone-900 border border-stone-800 rounded-2xl p-4 text-xs font-mono text-amber-300 overflow-x-auto select-all"></pre>
+            </div>
+            <div class="px-6 py-3.5 border-t border-orange-100 dark:border-stone-800 bg-white dark:bg-stone-900 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                    <button onclick="exportToExcel()" class="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs font-extrabold rounded-2xl border border-emerald-200 dark:border-emerald-800 transition cursor-pointer flex items-center gap-1.5">
+                        <span>📊</span> <span data-i18n="btn_export_excel">Xuất Excel (.xlsx)</span>
+                    </button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="copyAllCoordsToClipboard()" class="px-5 py-2 bg-vibrant-gradient text-white text-xs font-extrabold rounded-2xl transition cursor-pointer shadow-md shadow-rose-500/20">
+                        <span data-i18n="btn_copy_all">Sao chép toàn bộ</span>
+                    </button>
+                    <button onclick="toggleJsonModal()" class="px-4 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 text-xs font-bold rounded-2xl transition cursor-pointer">
+                        <span data-i18n="btn_close">Đóng</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tùy chọn Cột Dữ Liệu Xuất Excel & Database -->
+    <div id="excelColumnsModal" class="fixed inset-0 bg-stone-900/60 dark:bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-stone-900 border-2 border-emerald-200 dark:border-stone-700 rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <!-- Header Modal -->
+            <div class="px-6 py-4 border-b border-emerald-100 dark:border-stone-800 flex items-center justify-between bg-gradient-to-r from-emerald-50 via-teal-50 to-orange-50 dark:from-stone-800 dark:to-stone-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 text-sm">
+                        📊
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-stone-800 dark:text-stone-100 text-base" data-i18n="excel_modal_title">
+                            Tùy Chọn Cột Dữ Liệu Xuất Excel & Database
+                        </h3>
+                        <p class="text-[11px] text-stone-500 dark:text-stone-400" data-i18n="excel_modal_desc">
+                            Tích chọn các cột bạn muốn xuất ra file bảng tính (.xlsx / .csv):
+                        </p>
+                    </div>
+                </div>
+                <button onclick="closeExcelColumnModal()" class="text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 p-1.5 rounded-xl transition cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Toolbar Presets chọn nhanh -->
+            <div class="px-6 py-2.5 bg-stone-50/80 dark:bg-stone-950/50 border-b border-stone-200/70 dark:border-stone-800 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <span class="text-[11px] font-bold text-stone-500 dark:text-stone-400 mr-1">Bộ chọn nhanh:</span>
+                    <button onclick="applyExcelColumnPreset('all')" class="px-2.5 py-1 bg-white dark:bg-stone-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-stone-700 dark:text-stone-200 text-xs font-bold rounded-lg border border-stone-200 dark:border-stone-700 transition cursor-pointer" data-i18n="excel_preset_all">✨ Tất cả (23 cột)</button>
+                    <button onclick="applyExcelColumnPreset('minimal')" class="px-2.5 py-1 bg-white dark:bg-stone-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-stone-700 dark:text-stone-200 text-xs font-bold rounded-lg border border-stone-200 dark:border-stone-700 transition cursor-pointer" data-i18n="excel_preset_minimal">📌 Cơ bản (8 cột)</button>
+                    <button onclick="applyExcelColumnPreset('pixel')" class="px-2.5 py-1 bg-white dark:bg-stone-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-stone-700 dark:text-stone-200 text-xs font-bold rounded-lg border border-stone-200 dark:border-stone-700 transition cursor-pointer" data-i18n="excel_preset_pixel">📐 Tọa độ Pixel</button>
+                    <button onclick="applyExcelColumnPreset('yolo')" class="px-2.5 py-1 bg-white dark:bg-stone-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-stone-700 dark:text-stone-200 text-xs font-bold rounded-lg border border-stone-200 dark:border-stone-700 transition cursor-pointer" data-i18n="excel_preset_yolo">🤖 Chuẩn YOLO</button>
+                    <button onclick="applyExcelColumnPreset('db')" class="px-2.5 py-1 bg-white dark:bg-stone-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-stone-700 dark:text-stone-200 text-xs font-bold rounded-lg border border-stone-200 dark:border-stone-700 transition cursor-pointer" data-i18n="excel_preset_db">🗄️ Chuẩn Database</button>
+                    <button onclick="applyExcelColumnPreset('none')" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 text-xs font-bold rounded-lg border border-rose-200 dark:border-rose-900 transition cursor-pointer" data-i18n="excel_preset_none">❌ Bỏ chọn hết</button>
+                </div>
+                <div id="excelSelectedCounter" class="text-xs font-bold text-stone-600 dark:text-stone-300">
+                    <!-- Sẽ cập nhật động -->
+                </div>
+            </div>
+
+            <!-- Body: Danh sách các nhóm cột có checkbox -->
+            <div id="excelColumnGroupsContainer" class="p-5 overflow-y-auto flex-1 space-y-3.5 bg-stone-100/50 dark:bg-stone-950/80">
+                <!-- Sẽ render động qua renderExcelColumnCheckboxes() -->
+            </div>
+
+            <!-- Footer: Nút xuất file -->
+            <div class="px-6 py-3.5 border-t border-emerald-100 dark:border-stone-800 bg-white dark:bg-stone-900 flex flex-wrap items-center justify-between gap-3">
+                <div class="text-xs text-stone-500 dark:text-stone-400 font-medium">
+                    💡 <span class="italic">File .xlsx tối ưu xem trên Excel; file .csv UTF-8 tối ưu import trực tiếp vào PostgreSQL / MySQL / SQLite.</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="closeExcelColumnModal()" class="px-4 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 text-xs font-bold rounded-2xl transition cursor-pointer" data-i18n="btn_close">
+                        Đóng
+                    </button>
+                    <button onclick="executeExcelExport('csv')" class="px-4 py-2 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-xs font-extrabold rounded-2xl border border-amber-300 dark:border-amber-800 transition cursor-pointer flex items-center gap-1.5 shadow-sm">
+                        <span>📄</span> <span data-i18n="btn_export_csv_now">Xuất CSV (.csv)</span>
+                    </button>
+                    <button onclick="executeExcelExport('xlsx')" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold rounded-2xl transition cursor-pointer shadow-md shadow-emerald-500/25 flex items-center gap-1.5">
+                        <span>📊</span> <span data-i18n="btn_export_xlsx_now">Xuất Excel (.xlsx)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Quản lý & Thêm Tag Mới (Cho phép sửa tên/màu Tag hiện có + Thêm Tag mới + Nhập Excel) -->
+    <div id="addTagModal" class="fixed inset-0 bg-stone-900/60 dark:bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <input type="file" id="tagExcelFileInput" accept=".xlsx,.xls,.csv" class="hidden">
+        <div class="bg-white dark:bg-stone-900 border-2 border-rose-200 dark:border-stone-700 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl flex flex-col max-h-[88vh]">
+            <div class="px-6 py-4 border-b border-orange-100 dark:border-stone-800 flex items-center justify-between bg-gradient-to-r from-rose-50 to-orange-50 dark:from-stone-800 dark:to-stone-800">
+                <h3 class="font-extrabold text-stone-800 dark:text-stone-100 text-base flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-vibrant-gradient"></span>
+                    <span data-i18n="tag_modal_title">Quản Lý Danh Sách Tag (Choice) & Thêm Tag Mới</span>
+                </h3>
+                <button onclick="toggleAddTagModal()" class="text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 p-1 rounded-xl cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-5 overflow-y-auto space-y-4 flex-1">
+                <!-- Phần 1: Tạo Tag mới thủ công -->
+                <div class="bg-gradient-to-br from-rose-50/70 to-orange-50/70 dark:from-stone-800/80 dark:to-stone-800/80 p-4 rounded-2xl border border-orange-200 dark:border-stone-700 space-y-3">
+                    <div data-i18n="tag_modal_section1" class="text-xs font-extrabold text-rose-700 dark:text-rose-400 uppercase tracking-wider">✨ Thêm Tag mới vào Combo Choice</div>
+                    <div class="grid grid-cols-12 gap-2.5 items-center">
+                        <div class="col-span-2">
+                            <label data-i18n="tag_modal_icon" class="block text-[10px] font-bold text-stone-500 dark:text-stone-400 mb-1">Icon</label>
+                            <input type="text" id="newTagIconInput" value="🏷️" maxlength="3"
+                                   class="w-full bg-white dark:bg-stone-900 border border-orange-200 dark:border-stone-700 rounded-xl px-2 py-2 text-center text-sm outline-none text-stone-800 dark:text-stone-100">
+                        </div>
+                        <div class="col-span-3">
+                            <label data-i18n="tag_modal_id" class="block text-[10px] font-bold text-stone-500 dark:text-stone-400 mb-1">Mã Tag (ID)</label>
+                            <input type="text" id="newTagIdInput" data-i18n-placeholder="tag_modal_id_ph" placeholder="VD: defect, P01..."
+                                   class="w-full bg-white dark:bg-stone-900 border border-orange-200 dark:border-stone-700 focus:border-rose-500 font-mono rounded-xl px-2.5 py-2 text-xs font-bold text-stone-800 dark:text-stone-100 outline-none">
+                        </div>
+                        <div class="col-span-4">
+                            <label data-i18n="tag_modal_name" class="block text-[10px] font-bold text-stone-500 dark:text-stone-400 mb-1">Tên Tag mới</label>
+                            <input type="text" id="newTagNameInput" data-i18n-placeholder="tag_modal_name_ph" placeholder="VD: Sản phẩm lỗi, Biển số..."
+                                   class="w-full bg-white dark:bg-stone-900 border border-orange-200 dark:border-stone-700 focus:border-rose-500 rounded-xl px-3 py-2 text-xs font-bold text-stone-800 dark:text-stone-100 outline-none">
+                        </div>
+                        <div class="col-span-3">
+                            <label data-i18n="tag_modal_color" class="block text-[10px] font-bold text-stone-500 dark:text-stone-400 mb-1">Màu khung</label>
+                            <input type="color" id="newTagColorInput" value="#ff2a6d"
+                                   class="w-full h-9 rounded-xl bg-white dark:bg-stone-900 border border-orange-200 dark:border-stone-700 cursor-pointer p-0.5">
+                        </div>
+                    </div>
+
+                    <!-- Chọn nhanh Icon cơ bản -->
+                    <div>
+                        <label data-i18n="tag_modal_icon_presets" class="block text-[10px] font-bold text-stone-500 dark:text-stone-400 mb-1">Chọn nhanh icon cơ bản:</label>
+                        <div id="basicIconPicker" class="flex flex-wrap gap-1.5 p-2 bg-white/90 dark:bg-stone-900 rounded-xl border border-orange-200/80 dark:border-stone-700 max-h-24 overflow-y-auto"></div>
+                    </div>
+
+                    <button onclick="createNewCustomTag()" class="w-full py-2 bg-vibrant-gradient text-white text-xs font-extrabold rounded-xl shadow-md shadow-rose-500/20 hover:opacity-95 cursor-pointer">
+                        <span data-i18n="tag_modal_btn_add">+ Thêm vào danh sách Choice & Chọn ngay</span>
+                    </button>
+                </div>
+
+                <!-- Phần 2: Nhập & Xuất danh mục Tag qua file Excel / CSV (Kèm Template) -->
+                <div class="bg-gradient-to-br from-emerald-50/70 to-teal-50/70 dark:from-stone-800/80 dark:to-stone-800/80 p-4 rounded-2xl border border-emerald-200 dark:border-stone-700 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <div data-i18n="tag_modal_section_excel" class="text-xs font-extrabold text-emerald-800 dark:text-emerald-400 uppercase tracking-wider">
+                            📥 Nhập & Xuất Danh Sách Tag Qua Excel / CSV (Kèm Template)
+                        </div>
+                    </div>
+                    <p data-i18n="tag_modal_desc_excel" class="text-[11px] text-stone-500 dark:text-stone-400 leading-relaxed">
+                        Quản lý Tag số lượng lớn bằng bảng tính Excel. Bạn có thể tải file template mẫu, điền các Tag rồi nạp lại vào hệ thống.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+                        <!-- Nút Tải Template Mẫu -->
+                        <button onclick="downloadTagTemplateExcel()" type="button" id="btnDownloadTagTemplate"
+                                class="px-3 py-2 bg-white dark:bg-stone-900 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-xs font-bold rounded-xl border border-emerald-300 dark:border-emerald-800 transition flex items-center justify-center gap-1.5 shadow-sm cursor-pointer">
+                            <span>📄</span>
+                            <span data-i18n="btn_download_tag_template">Tải Template Mẫu (.xlsx)</span>
+                        </button>
+                        
+                        <!-- Nút Nhập Tag từ Excel -->
+                        <button onclick="triggerImportTagExcel()" type="button" id="btnImportTagsExcel"
+                                class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold rounded-xl transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20 cursor-pointer">
+                            <span>📊</span>
+                            <span data-i18n="btn_import_tags_excel">Nhập Tag từ Excel / CSV</span>
+                        </button>
+                        
+                        <!-- Nút Xuất danh sách Tag hiện tại -->
+                        <button onclick="exportCurrentTagsToExcel()" type="button" id="btnExportTagsExcel"
+                                class="px-3 py-2 bg-white dark:bg-stone-900 hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-200 text-xs font-bold rounded-xl border border-stone-200 dark:border-stone-700 transition flex items-center justify-center gap-1.5 cursor-pointer">
+                            <span>📤</span>
+                            <span data-i18n="btn_export_tags_excel">Xuất Danh Sách Tag</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Phần 3: Chỉnh sửa trực tiếp các Tag hiện có trong Choice -->
+                <div>
+                    <div data-i18n="tag_modal_section2" class="text-xs font-extrabold text-stone-600 dark:text-stone-300 uppercase tracking-wider mb-2">🎨 Chỉnh sửa các Tag trong Combo hiện tại</div>
+                    <div id="existingTagsManagerList" class="space-y-2 max-h-56 overflow-y-auto pr-1"></div>
+                </div>
+            </div>
+            <div class="px-6 py-3.5 border-t border-orange-100 dark:border-stone-800 bg-orange-50/30 dark:bg-stone-900/50 flex justify-end">
+                <button onclick="toggleAddTagModal()" class="px-5 py-2 bg-stone-800 dark:bg-rose-600 hover:bg-stone-900 dark:hover:bg-rose-700 text-white text-xs font-bold rounded-2xl transition cursor-pointer">
+                    <span data-i18n="tag_modal_btn_done">Hoàn tất</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thông báo Toast nổi sinh động -->
+    <div id="toastNotification" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-2 transition-all duration-300">
+        <div class="bg-stone-900/95 backdrop-blur-xl text-white border border-rose-400/40 px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold">
+            <span id="toastIcon" class="w-2.5 h-2.5 rounded-full bg-rose-400"></span>
+            <span id="toastMessage">Đã lưu tọa độ khung!</span>
+        </div>
+    </div>
+
+    <!-- Vùng textarea ẩn hỗ trợ sao chép clipboard an toàn trong iframe -->
+    <textarea id="hiddenClipboardInput" class="fixed -top-96 opacity-0 pointer-events-none"></textarea>
+
+</body>
+</html>

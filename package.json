@@ -1,0 +1,38 @@
+{
+  "name": "bbox-studio",
+  "version": "3.2.0",
+  "description": "Lightweight, zero-dependency web image annotation & bounding box tool. Features custom Tag IDs, Excel/CSV/JSON/YOLO exports, multi-language (VI/EN/ZH), and iframe embedding.",
+  "type": "module",
+  "main": "server.js",
+  "homepage": "https://laitran27.github.io/bbox-studio/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laitran27/bbox-studio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/laitran27/bbox-studio/issues"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "serve": "node server.js --no-open",
+    "test": "node verify_test.js"
+  },
+  "keywords": [
+    "bounding-box",
+    "image-annotation",
+    "image-labeling",
+    "yolo",
+    "computer-vision",
+    "dataset-generator",
+    "object-detection",
+    "annotation-tool",
+    "canvas",
+    "html5-canvas",
+    "iframe-widget",
+    "excel-export",
+    "javascript"
+  ],
+  "author": "laitran27",
+  "license": "MIT"
+}
