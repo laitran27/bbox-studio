@@ -56,19 +56,19 @@ export function renderTagChoicesUI() {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.onclick = () => setActiveTag(tag.id);
-        btn.className = `px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shrink-0 cursor-pointer border-2 ${
+        btn.className = `px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 transition shrink-0 cursor-pointer ${
             isSelected 
-                ? 'bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 shadow-md scale-[1.02]' 
-                : 'bg-orange-50/60 dark:bg-stone-800/60 text-stone-600 dark:text-stone-300 border-orange-100 dark:border-stone-700 hover:bg-white dark:hover:bg-stone-700 hover:text-stone-900 dark:hover:text-stone-100'
+                ? 'lg-glass-strong text-slate-900 dark:text-white scale-[1.02]' 
+                : 'lg-pill text-slate-600 dark:text-slate-300 hover:brightness-105 hover:text-slate-900 dark:hover:text-white'
         }`;
         if (isSelected) {
             btn.style.borderColor = tag.color;
-            btn.style.boxShadow = `0 4px 12px ${tag.color}30`;
+            btn.style.boxShadow = `0 6px 16px -4px ${tag.color}45, inset 0 1px 0 rgba(255,255,255,0.85)`;
         }
         btn.innerHTML = `
             <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${tag.color}"></span>
             <span>${tag.icon} ${escapeHtml(tag.id)}-${escapeHtml(tag.name)}</span>
-            ${shortcutKey ? `<kbd class="ml-0.5 px-1.5 py-0.2 text-[10px] font-mono bg-orange-100/80 dark:bg-stone-700 text-rose-600 dark:text-rose-400 rounded-md font-extrabold">${shortcutKey}</kbd>` : ''}
+            ${shortcutKey ? `<kbd class="ml-0.5 px-1.5 py-0.2 text-[10px] font-mono bg-white/50 dark:bg-white/10 text-rose-600 dark:text-rose-300 rounded-full font-extrabold">${shortcutKey}</kbd>` : ''}
         `;
         chipsContainer.appendChild(btn);
     });
@@ -145,10 +145,10 @@ export function renderBasicIconPalette() {
         const btn = document.createElement('button');
         btn.type = 'button';
         const isSelected = icon === currentIcon;
-        btn.className = `w-7 h-7 rounded-lg flex items-center justify-center text-sm transition cursor-pointer border ${
+        btn.className = `w-7 h-7 rounded-xl flex items-center justify-center text-sm transition cursor-pointer ${
             isSelected 
-                ? 'bg-rose-100 dark:bg-rose-950 border-rose-500 scale-110 shadow-sm ring-2 ring-rose-400/40 text-stone-900 dark:text-white' 
-                : 'bg-white dark:bg-stone-800 hover:bg-orange-50 dark:hover:bg-stone-700 border-stone-200 dark:border-stone-700 hover:border-orange-300 dark:hover:border-stone-500 text-stone-800 dark:text-stone-200'
+                ? 'lg-glass-strong border-rose-500 scale-110 ring-2 ring-rose-400/40 text-slate-900 dark:text-white' 
+                : 'lg-btn-glass text-slate-800 dark:text-slate-200'
         }`;
         btn.textContent = icon;
         btn.onclick = () => selectNewTagIcon(icon);
@@ -196,28 +196,28 @@ export function renderExistingTagsManager() {
     listEl.innerHTML = '';
     state.tagChoices.forEach((tag) => {
         const row = document.createElement('div');
-        row.className = 'flex items-center gap-2 bg-stone-50 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 rounded-xl p-2';
+        row.className = 'flex items-center gap-2 lg-glass-subtle rounded-2xl p-2';
         row.innerHTML = `
             <input type="text" value="${escapeHtml(tag.icon)}" maxlength="3"
                    onchange="editExistingTag('${tag.id}', 'icon', this.value)"
                    title="${t('tag_modal_icon')}"
-                   class="w-9 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-100 rounded-lg py-1 text-center text-xs outline-none font-bold">
+                   class="w-9 lg-input text-slate-800 dark:text-slate-100 rounded-xl py-1 text-center text-xs outline-none font-bold">
             <input type="text" value="${escapeHtml(tag.id)}"
                    onchange="editExistingTag('${tag.id}', 'id', this.value)"
                    title="${t('tag_modal_id')}"
                    placeholder="ID"
-                   class="w-24 sm:w-28 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 focus:border-rose-400 rounded-lg px-2 py-1 text-xs font-mono font-bold text-stone-800 dark:text-stone-100 outline-none">
+                   class="w-24 sm:w-28 lg-input rounded-xl px-2 py-1 text-xs font-mono font-bold text-slate-800 dark:text-slate-100 outline-none">
             <input type="text" value="${escapeHtml(tag.name)}"
                    onchange="editExistingTag('${tag.id}', 'name', this.value)"
                    placeholder="${t('tag_modal_name')}"
-                   class="flex-1 min-w-[100px] bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 focus:border-rose-400 rounded-lg px-2.5 py-1 text-xs font-bold text-stone-800 dark:text-stone-100 outline-none">
+                   class="flex-1 min-w-[100px] lg-input rounded-xl px-2.5 py-1 text-xs font-bold text-slate-800 dark:text-slate-100 outline-none">
             <input type="color" value="${tag.color}"
                    onchange="editExistingTag('${tag.id}', 'color', this.value)"
                    title="${t('tag_modal_color')}"
-                   class="w-9 h-7 rounded-lg bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 cursor-pointer p-0.5">
+                   class="w-9 h-7 rounded-xl lg-input cursor-pointer p-0.5">
             <button type="button" onclick="deleteTag('${tag.id}')"
                     title="${t('tag_delete_btn_title')}"
-                    class="w-8 h-7 rounded-lg bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xs font-bold transition cursor-pointer shrink-0 border border-rose-200 dark:border-rose-900/60">
+                    class="w-8 h-7 rounded-xl lg-btn-glass text-rose-600 dark:text-rose-400 flex items-center justify-center text-xs font-bold cursor-pointer shrink-0">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                 </svg>

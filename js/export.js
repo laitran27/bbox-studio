@@ -322,14 +322,14 @@ export function renderExcelColumnCheckboxes() {
             const isChecked = selectedCols.has(col.key);
             const label = col[`label_${currentLang}`] || col.label_vi || col.key;
             return `
-                <label class="flex items-start gap-2.5 p-2 rounded-xl border ${isChecked ? 'border-emerald-300 dark:border-emerald-700 bg-emerald-50/50 dark:bg-emerald-950/30' : 'border-stone-200/70 dark:border-stone-800/80 bg-stone-50/60 dark:bg-stone-800/40'} hover:border-emerald-400 dark:hover:border-emerald-600 transition cursor-pointer select-none">
+                <label class="flex items-start gap-2.5 p-2.5 rounded-xl border ${isChecked ? 'border-emerald-400/70 dark:border-emerald-500/60 bg-emerald-400/15 dark:bg-emerald-500/15' : 'border-white/50 dark:border-white/10 bg-white/35 dark:bg-white/5'} hover:border-emerald-400 dark:hover:border-emerald-500 transition cursor-pointer select-none">
                     <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleExcelColumn('${col.key}')"
                            class="mt-0.5 w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600">
                     <div class="flex-1 min-w-0">
-                        <div class="font-mono text-xs font-bold text-stone-800 dark:text-stone-200 truncate flex items-center gap-1">
+                        <div class="font-mono text-xs font-bold text-slate-800 dark:text-slate-100 truncate flex items-center gap-1">
                             <span>${col.key}</span>
                         </div>
-                        <div class="text-[11px] text-stone-500 dark:text-stone-400 leading-snug line-clamp-2">
+                        <div class="text-[11px] text-slate-600 dark:text-slate-300 leading-snug line-clamp-2">
                             ${label}
                         </div>
                     </div>
@@ -338,12 +338,12 @@ export function renderExcelColumnCheckboxes() {
         }).join('');
 
         return `
-            <div class="bg-white dark:bg-stone-900 rounded-2xl border border-stone-200/90 dark:border-stone-800 p-4 shadow-sm">
-                <div class="flex items-center justify-between pb-2.5 mb-3 border-b border-stone-100 dark:border-stone-800">
+            <div class="lg-glass-subtle rounded-2xl p-4">
+                <div class="flex items-center justify-between pb-2.5 mb-3 border-b border-white/40 dark:border-white/10">
                     <div class="flex items-center gap-2">
                         <span class="text-base">${group.icon}</span>
-                        <h4 class="font-bold text-xs text-stone-800 dark:text-stone-100 uppercase tracking-wider">${groupTitle}</h4>
-                        <span class="text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400">
+                        <h4 class="font-bold text-xs text-slate-800 dark:text-slate-100 uppercase tracking-wider">${groupTitle}</h4>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold lg-pill text-slate-600 dark:text-slate-300">
                             ${selectedCountInGroup}/${groupCols.length}
                         </span>
                     </div>

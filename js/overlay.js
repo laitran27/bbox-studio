@@ -80,26 +80,26 @@ export function renderOverlayBoxes() {
             : '-top-7 left-0';
 
         const inlineComboHtml = showInlineCombos ? `
-            <div class="inline-box-toolbar absolute ${toolbarPositionClass} flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-white whitespace-nowrap pointer-events-auto cursor-default shadow-md"
-                 style="background-color: ${box.color};"
+            <div class="inline-box-toolbar absolute ${toolbarPositionClass} flex items-center gap-1 px-1.5 py-0.5 rounded-full text-white whitespace-nowrap pointer-events-auto cursor-default"
+                 style="background-color: ${hexToRgba(box.color, 0.86)};"
                  onmousedown="event.stopPropagation()">
                 
                 <!-- Số thứ tự khung -->
-                <span class="px-1.5 py-0.5 rounded-md bg-black/25 text-[10px] font-mono font-extrabold tracking-tighter">
+                <span class="px-1.5 py-0.5 rounded-full bg-black/25 text-[10px] font-mono font-extrabold tracking-tighter">
                     #${idx + 1}
                 </span>
 
                 <!-- DROPDOWN CHỌN & ĐỔI TAG TRỰC TIẾP TRÊN KHUNG (ID-Tên tag) -->
                 <select onchange="updateBoxTag('${box.id}', this.value)"
                         title="${t('box_num', { num: idx + 1 })}"
-                        class="bg-white/95 hover:bg-white text-stone-900 rounded-md px-1.5 py-0.5 text-[11px] font-extrabold outline-none cursor-pointer shadow-sm border border-white/60 max-w-[190px]">
+                        class="bg-white/90 hover:bg-white text-slate-900 rounded-full px-2 py-0.5 text-[11px] font-extrabold outline-none cursor-pointer shadow-sm border border-white/70 max-w-[190px]">
                     ${tagOptionsHtml}
                 </select>
 
                 <!-- Nút xóa nhanh khung ngay trên ảnh -->
                 <button type="button" onclick="deleteBox('${box.id}')"
                         title="${t('card_delete_btn_title')}"
-                        class="w-5 h-5 rounded-md bg-black/25 hover:bg-black/45 text-white flex items-center justify-center text-[11px] font-bold transition cursor-pointer ml-0.5">
+                        class="w-5 h-5 rounded-full bg-black/25 hover:bg-black/45 text-white flex items-center justify-center text-[11px] font-bold transition cursor-pointer ml-0.5">
                     ✕
                 </button>
             </div>
@@ -115,7 +115,7 @@ export function renderOverlayBoxes() {
 
         // Nhãn tọa độ nhỏ ở góc dưới phải của khung
         const bottomCoordBadgeHtml = `
-            <div class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-stone-900/75 text-white font-mono text-[9px] font-bold pointer-events-none">
+            <div class="absolute bottom-1 right-1 px-2 py-0.5 rounded-full bg-slate-950/65 backdrop-blur-md border border-white/25 text-white font-mono text-[9px] font-bold pointer-events-none">
                 ${box.width}×${box.height}px
             </div>
         `;

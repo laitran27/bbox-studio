@@ -1,74 +1,304 @@
+/* ==========================================================================
+   LIQUID GLASS DESIGN SYSTEM — BBOX CREATIVE STUDIO
+   Translucent layered glass, specular highlights, ambient refraction & themes
+   ========================================================================== */
+
 :root {
-    --bg-main: #fff8f5;
-    --bg-panel: rgba(255, 255, 255, 0.92);
-    --border-soft: #fed7aa;
-    --accent-grad: linear-gradient(135deg, #ff2a6d 0%, #ff7b00 50%, #a855f7 100%);
-    --checker-a: #fff1eb;
-    --checker-b: #ffe4d6;
+    --bg-main: #f3f6fc;
+    --bg-panel: rgba(255, 255, 255, 0.56);
+    --border-soft: rgba(255, 255, 255, 0.68);
+    --accent-grad: linear-gradient(135deg, #ff3b6b 0%, #ff7b29 52%, #8b5cf6 100%);
+    --checker-a: rgba(255, 255, 255, 0.32);
+    --checker-b: rgba(148, 163, 184, 0.14);
+
+    /* Liquid Glass Tokens (Light - Sunset Pop) */
+    --lg-bg-base: linear-gradient(135deg, #f6f2ff 0%, #fff3f0 45%, #eef6ff 100%);
+    --lg-orb-1: radial-gradient(circle at center, rgba(255, 94, 126, 0.34), rgba(255, 138, 76, 0.16) 55%, transparent 72%);
+    --lg-orb-2: radial-gradient(circle at center, rgba(139, 92, 246, 0.28), rgba(56, 189, 248, 0.16) 55%, transparent 72%);
+    --lg-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.66) 0%, rgba(255, 255, 255, 0.42) 100%);
+    --lg-surface-strong: linear-gradient(145deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.58) 100%);
+    --lg-surface-subtle: rgba(255, 255, 255, 0.44);
+    --lg-surface-hover: rgba(255, 255, 255, 0.72);
+    --lg-input-bg: rgba(255, 255, 255, 0.56);
+    --lg-border: rgba(255, 255, 255, 0.76);
+    --lg-border-subtle: rgba(148, 163, 184, 0.24);
+    --lg-highlight: rgba(255, 255, 255, 0.92);
+    --lg-inner-shade: rgba(15, 23, 42, 0.04);
+    --lg-shadow: 0 12px 36px -10px rgba(31, 38, 66, 0.14), 0 2px 8px -2px rgba(31, 38, 66, 0.06);
+    --lg-shadow-float: 0 24px 60px -16px rgba(24, 32, 56, 0.24), 0 4px 16px -4px rgba(24, 32, 56, 0.10);
+    --lg-accent-shadow: 0 10px 24px -6px rgba(255, 59, 107, 0.36);
+    --lg-thumb-grad: linear-gradient(180deg, rgba(255, 75, 118, 0.72), rgba(255, 134, 66, 0.72));
 }
 
 body.theme-tropical {
-    --bg-main: #f3faf7;
-    --bg-panel: rgba(255, 255, 255, 0.92);
-    --border-soft: #a7f3d0;
-    --accent-grad: linear-gradient(135deg, #10b981 0%, #f59e0b 50%, #ec4899 100%);
-    --checker-a: #ecfdf5;
-    --checker-b: #d1fae5;
+    --bg-main: #eef9f6;
+    --bg-panel: rgba(255, 255, 255, 0.56);
+    --border-soft: rgba(255, 255, 255, 0.68);
+    --accent-grad: linear-gradient(135deg, #06b6d4 0%, #10b981 52%, #f59e0b 100%);
+    --lg-bg-base: linear-gradient(135deg, #ecfdf5 0%, #ecfeff 50%, #fefce8 100%);
+    --lg-orb-1: radial-gradient(circle at center, rgba(16, 185, 129, 0.32), rgba(6, 182, 212, 0.16) 55%, transparent 72%);
+    --lg-orb-2: radial-gradient(circle at center, rgba(245, 158, 11, 0.24), rgba(236, 72, 153, 0.14) 55%, transparent 72%);
+    --lg-accent-shadow: 0 10px 24px -6px rgba(16, 185, 129, 0.34);
+    --lg-thumb-grad: linear-gradient(180deg, rgba(16, 185, 129, 0.72), rgba(6, 182, 212, 0.72));
 }
 
 body.theme-neon {
-    --bg-main: #fdf4ff;
-    --bg-panel: rgba(255, 255, 255, 0.92);
-    --border-soft: #f5d0fe;
-    --accent-grad: linear-gradient(135deg, #d946ef 0%, #f43f5e 50%, #8b5cf6 100%);
-    --checker-a: #fae8ff;
-    --checker-b: #f3e8ff;
+    --bg-main: #f5f0ff;
+    --bg-panel: rgba(255, 255, 255, 0.56);
+    --border-soft: rgba(255, 255, 255, 0.68);
+    --accent-grad: linear-gradient(135deg, #d946ef 0%, #6366f1 52%, #06b6d4 100%);
+    --lg-bg-base: linear-gradient(135deg, #faf5ff 0%, #eef2ff 50%, #ecfeff 100%);
+    --lg-orb-1: radial-gradient(circle at center, rgba(217, 70, 239, 0.30), rgba(99, 102, 241, 0.16) 55%, transparent 72%);
+    --lg-orb-2: radial-gradient(circle at center, rgba(6, 182, 212, 0.28), rgba(168, 85, 247, 0.14) 55%, transparent 72%);
+    --lg-accent-shadow: 0 10px 24px -6px rgba(168, 85, 247, 0.36);
+    --lg-thumb-grad: linear-gradient(180deg, rgba(217, 70, 239, 0.72), rgba(99, 102, 241, 0.72));
 }
 
 /* ========================================== */
-/* DARK MODE CHUYÊN NGHIỆP GIẢM MỎI MẮT     */
+/* DARK MODE — DEEP OBSIDIAN LIQUID GLASS     */
 /* ========================================== */
 html.dark, body.dark {
-    --bg-main: #0c0f17;
-    --bg-panel: rgba(18, 24, 38, 0.96);
-    --border-soft: #334155;
-    --accent-grad: linear-gradient(135deg, #ff2a6d 0%, #ff7b00 50%, #a855f7 100%);
-    --checker-a: #0f172a;
-    --checker-b: #1e293b;
+    --bg-main: #070b14;
+    --bg-panel: rgba(15, 23, 42, 0.56);
+    --border-soft: rgba(255, 255, 255, 0.14);
+    --accent-grad: linear-gradient(135deg, #ff3b6b 0%, #ff7b29 52%, #8b5cf6 100%);
+    --checker-a: rgba(15, 23, 42, 0.45);
+    --checker-b: rgba(148, 163, 184, 0.08);
+
+    --lg-bg-base: linear-gradient(135deg, #070b16 0%, #0d1324 50%, #120d22 100%);
+    --lg-orb-1: radial-gradient(circle at center, rgba(255, 59, 107, 0.24), rgba(255, 123, 41, 0.10) 55%, transparent 72%);
+    --lg-orb-2: radial-gradient(circle at center, rgba(99, 102, 241, 0.26), rgba(56, 189, 248, 0.12) 55%, transparent 72%);
+    --lg-surface: linear-gradient(145deg, rgba(24, 33, 56, 0.68) 0%, rgba(15, 23, 42, 0.48) 100%);
+    --lg-surface-strong: linear-gradient(145deg, rgba(28, 38, 64, 0.84) 0%, rgba(16, 24, 43, 0.68) 100%);
+    --lg-surface-subtle: rgba(30, 41, 68, 0.42);
+    --lg-surface-hover: rgba(45, 58, 92, 0.62);
+    --lg-input-bg: rgba(15, 23, 42, 0.56);
+    --lg-border: rgba(255, 255, 255, 0.16);
+    --lg-border-subtle: rgba(255, 255, 255, 0.10);
+    --lg-highlight: rgba(255, 255, 255, 0.20);
+    --lg-inner-shade: rgba(0, 0, 0, 0.28);
+    --lg-shadow: 0 14px 40px -10px rgba(0, 0, 0, 0.58), 0 2px 10px -2px rgba(0, 0, 0, 0.34);
+    --lg-shadow-float: 0 28px 70px -16px rgba(0, 0, 0, 0.78), 0 4px 20px -4px rgba(0, 0, 0, 0.45);
     color-scheme: dark;
 }
 
 html.dark body.theme-tropical, body.dark.theme-tropical {
-    --bg-main: #051b12;
-    --bg-panel: rgba(6, 32, 22, 0.96);
-    --border-soft: #065f46;
-    --checker-a: #062b1e;
-    --checker-b: #083324;
+    --lg-bg-base: linear-gradient(135deg, #041312 0%, #071b22 50%, #0b1915 100%);
+    --lg-orb-1: radial-gradient(circle at center, rgba(16, 185, 129, 0.24), rgba(6, 182, 212, 0.12) 55%, transparent 72%);
+    --lg-orb-2: radial-gradient(circle at center, rgba(56, 189, 248, 0.20), rgba(245, 158, 11, 0.10) 55%, transparent 72%);
 }
 
 html.dark body.theme-neon, body.dark.theme-neon {
-    --bg-main: #140b20;
-    --bg-panel: rgba(22, 12, 36, 0.96);
-    --border-soft: #701a75;
-    --checker-a: #1e1030;
-    --checker-b: #271440;
+    --lg-bg-base: linear-gradient(135deg, #0b0718 0%, #140b29 50%, #071826 100%);
+    --lg-orb-1: radial-gradient(circle at center, rgba(217, 70, 239, 0.26), rgba(139, 92, 246, 0.12) 55%, transparent 72%);
+    --lg-orb-2: radial-gradient(circle at center, rgba(6, 182, 212, 0.24), rgba(99, 102, 241, 0.12) 55%, transparent 72%);
 }
 
+/* ========================================== */
+/* BASE & AMBIENT LIQUID MESH BACKDROP        */
+/* ========================================== */
 body {
+    position: relative;
+    background: var(--lg-bg-base);
     background-color: var(--bg-main);
-    transition: background-color 0.25s ease, color 0.25s ease;
+    transition: background 0.35s ease, color 0.25s ease;
 }
 
-/* Nền caro nghệ thuật cho vùng chứa ảnh */
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    border-radius: 9999px;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(55px);
+    transform: translateZ(0);
+}
+
+body::before {
+    width: 58vw;
+    height: 58vw;
+    max-width: 780px;
+    max-height: 780px;
+    top: -18vw;
+    left: -10vw;
+    background: var(--lg-orb-1);
+}
+
+body::after {
+    width: 54vw;
+    height: 54vw;
+    max-width: 740px;
+    max-height: 740px;
+    bottom: -18vw;
+    right: -8vw;
+    background: var(--lg-orb-2);
+}
+
+body > header,
+body > main {
+    position: relative;
+    z-index: 10;
+}
+
+/* ========================================== */
+/* LIQUID GLASS SURFACES & CONTROLS           */
+/* ========================================== */
+.lg-glass {
+    background: var(--lg-surface);
+    backdrop-filter: blur(24px) saturate(185%);
+    -webkit-backdrop-filter: blur(24px) saturate(185%);
+    border: 1px solid var(--lg-border);
+    box-shadow: inset 0 1px 0 var(--lg-highlight), inset 0 -1px 0 var(--lg-inner-shade), var(--lg-shadow);
+}
+
+.lg-glass-strong {
+    background: var(--lg-surface-strong);
+    backdrop-filter: blur(30px) saturate(200%);
+    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    border: 1px solid var(--lg-border);
+    box-shadow: inset 0 1.5px 0 var(--lg-highlight), inset 0 -1px 0 var(--lg-inner-shade), var(--lg-shadow-float);
+}
+
+.lg-glass-subtle {
+    background: var(--lg-surface-subtle);
+    backdrop-filter: blur(18px) saturate(165%);
+    -webkit-backdrop-filter: blur(18px) saturate(165%);
+    border: 1px solid var(--lg-border);
+    box-shadow: inset 0 1px 0 var(--lg-highlight), 0 4px 16px -6px rgba(15, 23, 42, 0.08);
+}
+
+.lg-pill {
+    background: var(--lg-surface-subtle);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid var(--lg-border);
+    box-shadow: inset 0 1px 0 var(--lg-highlight), 0 2px 10px -4px rgba(15, 23, 42, 0.1);
+}
+
+.lg-input {
+    background: var(--lg-input-bg);
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    border: 1px solid var(--lg-border);
+    box-shadow: inset 0 1px 1px var(--lg-inner-shade), 0 1px 4px rgba(15, 23, 42, 0.04);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.lg-input:focus {
+    border-color: rgba(244, 63, 94, 0.65);
+    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.14), inset 0 1px 1px var(--lg-inner-shade);
+}
+
+.lg-btn-glass {
+    background: var(--lg-surface-subtle);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid var(--lg-border);
+    box-shadow: inset 0 1px 0 var(--lg-highlight), 0 4px 12px -4px rgba(15, 23, 42, 0.1);
+    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.lg-btn-glass:hover:not(:disabled) {
+    background: var(--lg-surface-hover);
+    transform: translateY(-1px);
+    box-shadow: inset 0 1px 0 var(--lg-highlight), 0 8px 18px -6px rgba(15, 23, 42, 0.14);
+}
+
+.lg-btn-glass:active:not(:disabled) {
+    transform: scale(0.97);
+}
+
+.lg-btn-primary {
+    background-image: var(--accent-grad);
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), var(--lg-accent-shadow);
+    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), filter 0.18s ease, box-shadow 0.18s ease;
+}
+
+.lg-btn-primary:hover:not(:disabled) {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+}
+
+.lg-btn-primary:active:not(:disabled) {
+    transform: scale(0.97);
+}
+
+.lg-card {
+    background: var(--lg-surface);
+    backdrop-filter: blur(18px) saturate(175%);
+    -webkit-backdrop-filter: blur(18px) saturate(175%);
+    border: 1px solid var(--lg-border);
+    box-shadow: inset 0 1px 0 var(--lg-highlight), 0 6px 20px -8px rgba(15, 23, 42, 0.12);
+    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.lg-card:hover {
+    background: var(--lg-surface-strong);
+}
+
+.lg-card-selected {
+    background: var(--lg-surface-strong);
+    backdrop-filter: blur(22px) saturate(190%);
+    -webkit-backdrop-filter: blur(22px) saturate(190%);
+    border: 1.5px solid rgba(244, 63, 94, 0.78);
+    box-shadow: inset 0 1px 0 var(--lg-highlight), 0 12px 30px -8px rgba(244, 63, 94, 0.24), 0 0 0 3px rgba(244, 63, 94, 0.12);
+}
+
+.lg-dropdown {
+    background: var(--lg-surface-strong);
+    backdrop-filter: blur(28px) saturate(200%);
+    -webkit-backdrop-filter: blur(28px) saturate(200%);
+    border: 1px solid var(--lg-border);
+    box-shadow: inset 0 1px 0 var(--lg-highlight), var(--lg-shadow-float);
+}
+
+.lg-modal {
+    background: var(--lg-surface-strong);
+    backdrop-filter: blur(32px) saturate(200%);
+    -webkit-backdrop-filter: blur(32px) saturate(200%);
+    border: 1px solid var(--lg-border);
+    box-shadow: inset 0 1.5px 0 var(--lg-highlight), var(--lg-shadow-float);
+}
+
+.lg-canvas-frame {
+    background: rgba(255, 255, 255, 0.28);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 24px 60px -16px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(148, 163, 184, 0.16);
+}
+
+html.dark .lg-canvas-frame {
+    background: rgba(15, 23, 42, 0.45);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Native select option readability inside translucent selects */
+select option {
+    background-color: #ffffff;
+    color: #1e293b;
+}
+
+html.dark select option {
+    background-color: #0f172a;
+    color: #f1f5f9;
+}
+
+/* ========================================== */
+/* CHECKERBOARD & GRADIENT HELPERS            */
+/* ========================================== */
 .bg-creative-checkerboard {
     background-color: var(--checker-a);
-    background-image: 
-        linear-gradient(45deg, var(--checker-b) 25%, transparent 25%), 
-        linear-gradient(-45deg, var(--checker-b) 25%, transparent 25%), 
-        linear-gradient(45deg, transparent 75%, var(--checker-b) 75%), 
+    background-image:
+        linear-gradient(45deg, var(--checker-b) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--checker-b) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--checker-b) 75%),
         linear-gradient(-45deg, transparent 75%, var(--checker-b) 75%);
-    background-size: 24px 24px;
-    background-position: 0 0, 0 12px, 12px -12px, -12px 0px;
+    background-size: 26px 26px;
+    background-position: 0 0, 0 13px, 13px -13px, -13px 0px;
     transition: background-color 0.25s ease;
 }
 
@@ -76,31 +306,29 @@ body {
     background-image: var(--accent-grad);
 }
 
-/* Thanh cuộn sinh động */
+/* ========================================== */
+/* SCROLLBARS (GLASSY & MINIMAL)              */
+/* ========================================== */
 ::-webkit-scrollbar {
     width: 7px;
     height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(255, 123, 0, 0.06);
-    border-radius: 8px;
-}
-
-html.dark ::-webkit-scrollbar-track {
-    background: rgba(15, 23, 42, 0.6);
+    background: transparent;
+    border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #ff5e62, #ff9966);
-    border-radius: 8px;
+    background: var(--lg-thumb-grad);
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #ff3366, #ff7b00);
+    filter: brightness(1.08);
 }
 
-/* Ẩn thanh cuộn cho các container cuộn ngang tiện lợi */
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
@@ -114,33 +342,38 @@ canvas {
     touch-action: none;
 }
 
-/* Góc kéo thay đổi kích thước khung trực tiếp trên ảnh */
+/* ========================================== */
+/* CANVAS OVERLAY HANDLES & INLINE TOOLBAR    */
+/* ========================================== */
 .resize-handle {
     width: 11px;
     height: 11px;
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     border: 2.5px solid currentColor;
-    border-radius: 4px;
+    border-radius: 999px;
     position: absolute;
     z-index: 30;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-    transition: transform 0.12s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transition: transform 0.14s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html.dark .resize-handle {
-    background: #0f172a;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+    background: rgba(15, 23, 42, 0.92);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
 }
 
 .resize-handle:hover {
-    transform: scale(1.35);
+    transform: scale(1.38);
 }
 
-/* Thanh Combo gắn trực tiếp trên từng khung hình */
 .inline-box-toolbar {
-    box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.25), 0 0 0 1.5px rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(14px) saturate(170%);
+    -webkit-backdrop-filter: blur(14px) saturate(170%);
+    box-shadow: 0 10px 26px -6px rgba(15, 23, 42, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.55);
 }
 
 html.dark .inline-box-toolbar {
-    box-shadow: 0 8px 22px -3px rgba(0, 0, 0, 0.65), 0 0 0 1.5px rgba(255, 255, 255, 0.25);
+    box-shadow: 0 10px 28px -5px rgba(0, 0, 0, 0.72), inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
