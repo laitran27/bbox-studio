@@ -49,9 +49,9 @@ export function updateModeSwitcherUI() {
         const btn = document.getElementById(`modeBtn-${m}`);
         if (!btn) return;
         if (m === currentColorMode) {
-            btn.className = 'px-2 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 bg-gradient-to-r from-rose-500 to-orange-500 text-white shadow-sm cursor-pointer scale-100';
+            btn.className = 'px-2.5 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 lg-btn-primary text-white cursor-pointer scale-100';
         } else {
-            btn.className = 'px-2 py-1 rounded-xl text-xs font-bold text-stone-600 dark:text-stone-300 hover:bg-white/80 dark:hover:bg-stone-700/80 transition flex items-center gap-1 cursor-pointer';
+            btn.className = 'px-2.5 py-1 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-white/10 transition flex items-center gap-1 cursor-pointer';
         }
     });
 }
@@ -178,9 +178,9 @@ export function setCreativeTheme(themeName, showNotification = true) {
         const btn = document.getElementById(`themeBtn-${tKey}`);
         if (!btn) return;
         if (tKey === themeName) {
-            btn.className = 'px-2.5 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-gradient-to-r from-rose-500 to-orange-500 text-white shadow-sm cursor-pointer';
+            btn.className = 'px-2.5 py-1 rounded-full text-xs font-bold transition flex items-center gap-1.5 lg-btn-primary text-white cursor-pointer';
         } else {
-            btn.className = 'px-2.5 py-1 rounded-xl text-xs font-bold text-stone-600 dark:text-stone-300 hover:bg-white/70 dark:hover:bg-stone-700/70 transition flex items-center gap-1.5 cursor-pointer';
+            btn.className = 'px-2.5 py-1 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-white/10 transition flex items-center gap-1.5 cursor-pointer';
         }
     });
 
